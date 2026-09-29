@@ -21,9 +21,6 @@ export const metadata: Metadata = {
   title: "EcoDry | Professional Dry Cleaning & Eco-Friendly Laundry",
   description: "Experience professional garment care with 100% eco-friendly organic cleaning, convenient doorstep pickup and delivery for everyday clothes & delicate fabrics. Free pickup above ₹350.",
   keywords: "dry cleaning, eco friendly laundry, organic dry clean, laundry doorstep pickup, steam iron, sneaker spa, suit dry clean",
-  icons: {
-    icon: "/favicon.ico",
-  },
   openGraph: {
     title: "EcoDry | Clean More. Pay Less.",
     description: "Professional garment care with eco-friendly cleaning, doorstep pickup and reliable delivery.",
