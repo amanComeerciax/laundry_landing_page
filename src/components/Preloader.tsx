@@ -7,6 +7,13 @@ export default function Preloader() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Prevent browser from restoring scroll position
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    // Force scroll to top
+    window.scrollTo(0, 0);
+
     // Function to run the exit animation
     const runExitAnimation = () => {
       gsap.to('.preloader-container', {

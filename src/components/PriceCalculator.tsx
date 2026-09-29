@@ -15,7 +15,7 @@ interface PriceCalculatorProps {
 }
 
 export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProps) {
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'men' | 'women' | 'household' | 'specialty'>('all');
+  const [selectedCategory, setSelectedCategory] = useState<'men' | 'women' | 'household' | 'specialty'>('men');
   const [quantities, setQuantities] = useState<Record<string, number>>({
     'm-shirt': 2,
     'm-trouser': 2,
@@ -72,9 +72,7 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
     setQuantities({});
   };
 
-  const filteredItems = selectedCategory === 'all'
-    ? CALCULATOR_ITEMS
-    : CALCULATOR_ITEMS.filter((item) => item.category === selectedCategory);
+  const filteredItems = CALCULATOR_ITEMS.filter((item) => item.category === selectedCategory);
 
   // Compute total items and price
   const totalItems = Object.values(quantities).reduce((acc, qty) => acc + qty, 0);
@@ -145,7 +143,6 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
               marginBottom: '24px',
             }}>
               {[
-                { id: 'all', label: 'All Items' },
                 { id: 'men', label: "Men's Wear" },
                 { id: 'women', label: "Women's Wear" },
                 { id: 'household', label: 'Home Linen' },
