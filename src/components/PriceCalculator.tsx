@@ -375,6 +375,8 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
           .calc-items-grid {
             display: flex !important;
             flex-direction: column !important;
+            max-height: none !important;
+            overflow-y: visible !important;
           }
         }
         @media (max-width: 600px) {
