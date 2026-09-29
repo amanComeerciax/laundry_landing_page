@@ -11,11 +11,16 @@ export default function Preloader() {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    // Force scroll to top
+    // Force scroll to top and lock
     window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+
+    // Double check scroll after a tiny delay for mobile browsers
+    setTimeout(() => window.scrollTo(0, 0), 50);
 
     // Function to run the exit animation
     const runExitAnimation = () => {
+      document.body.style.overflow = '';
       gsap.to('.preloader-container', {
         opacity: 0,
         duration: 0.6,
