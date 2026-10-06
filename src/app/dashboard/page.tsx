@@ -106,7 +106,7 @@ export default function UserDashboardPage() {
       });
 
       socket.on('connect', () => {
-        socket.emit('join_user_room', user.id);
+        socket.emit('join_user_room', user?.id);
       });
 
       socket.on('order_updated', (updatedOrder) => {
@@ -300,7 +300,7 @@ export default function UserDashboardPage() {
 
         <div style={{ padding: '24px', borderTop: '1px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-            <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: "w-10 h-10" } }} />
+            <UserButton appearance={{ elements: { avatarBox: "w-10 h-10" } }} />
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <p style={{ fontWeight: 700, color: '#133857', fontSize: '14px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                 {user?.firstName || 'User'}

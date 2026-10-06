@@ -127,7 +127,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
             {isSignedIn && (
               <div style={{ marginLeft: '4px', paddingLeft: '20px', borderLeft: '2px solid #e2e8f0', display: 'flex', alignItems: 'center' }}>
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
               </div>
             )}
           </div>
@@ -262,7 +262,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
             )}
             {isSignedIn && (
               <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#133857', fontWeight: 600, textDecoration: 'none' }}>
-                My Account <UserButton afterSignOutUrl="/" />
+                My Account <UserButton />
               </Link>
             )}
           </div>
