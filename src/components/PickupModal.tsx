@@ -421,7 +421,7 @@ export default function PickupModal({
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <a
-                  href={`https://wa.me/919007515150?text=Hi%20EcoDry,%20I%20have%20scheduled%20pickup%20booking%20${bookingId}%20for%20${name}`}
+                  href={`https://wa.me/919265588226?text=Hi%20Glamour%20Dry,%20I%20have%20scheduled%20pickup%20booking%20${bookingId}%20for%20${name}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import SmoothScroll from '@/components/SmoothScroll';
 import TopBar from '@/components/TopBar';
 import Navbar from '@/components/Navbar';
@@ -14,26 +15,18 @@ import Testimonials from '@/components/Testimonials';
 import Faq from '@/components/Faq';
 import CtaBanner from '@/components/CtaBanner';
 import Footer from '@/components/Footer';
-import PickupModal from '@/components/PickupModal';
 
 export default function Home() {
-  const [isBookingOpen, setIsBookingOpen] = useState(false);
-  const [selectedService, setSelectedService] = useState('Organic Dry Cleaning');
-  const [orderSummary, setOrderSummary] = useState('');
-  const [orderTotal, setOrderTotal] = useState(0);
+  const router = useRouter();
 
   const handleOpenBooking = (serviceName?: string) => {
-    if (serviceName) {
-      setSelectedService(serviceName);
-    }
-    setIsBookingOpen(true);
+    let url = '/book';
+    if (serviceName) url += `?service=${encodeURIComponent(serviceName)}`;
+    router.push(url);
   };
 
   const handleBookFromCalculator = (itemsSummary: string, total: number) => {
-    setSelectedService('Instant Calculated Order');
-    setOrderSummary(itemsSummary);
-    setOrderTotal(total);
-    setIsBookingOpen(true);
+    router.push(`/book?summary=${encodeURIComponent(itemsSummary)}&total=${total}`);
   };
 
   return (
@@ -57,7 +50,7 @@ export default function Home() {
         {/* Interactive Instant Price Estimator (Free pickup above ₹350) */}
         <PriceCalculator onBookWithItems={handleBookFromCalculator} />
 
-        {/* Comparison: EcoDry vs Traditional Dry Cleaning */}
+        {/* Comparison: Glamour Dry vs Traditional Dry Cleaning */}
         <WhyEcoDry />
 
         {/* How It Works 5-Step Process */}
@@ -74,15 +67,6 @@ export default function Home() {
 
         {/* Comprehensive Footer */}
         <Footer />
-
-        {/* Interactive Doorstep Pickup Modal */}
-        <PickupModal
-          isOpen={isBookingOpen}
-          onClose={() => setIsBookingOpen(false)}
-          initialService={selectedService}
-          initialTotal={orderTotal}
-          initialItems={orderSummary}
-        />
       </main>
     </SmoothScroll>
   );

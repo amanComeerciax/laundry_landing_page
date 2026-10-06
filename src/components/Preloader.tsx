@@ -84,13 +84,15 @@ export default function Preloader() {
               repeatCount="indefinite"
             />
           </circle>
-          <circle cx="50" cy="50" r="24" fill="#0284c7" fillOpacity="0.3" stroke="#38b249" strokeWidth="3" />
-          <path d="M42 22C36 10 24 12 24 12C24 12 22 24 34 30C40 33 43 28 42 22Z" fill="#38b249" />
+          <circle cx="50" cy="50" r="24" fill="#0ea5e9" fillOpacity="0.1" />
+          <path d="M35 52C40 48 44 56 50 52C56 48 60 56 65 52" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+          <path d="M30 10 Q 30 22 18 22 Q 30 22 30 34 Q 30 22 42 22 Q 30 22 30 10Z" fill="#38b249" />
+          <path d="M48 14 Q 48 20 42 20 Q 48 20 48 26 Q 48 20 54 20 Q 48 20 48 14Z" fill="#0ea5e9" />
         </svg>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '2px', lineHeight: 1 }}>
-        <span style={{ fontSize: '28px', fontWeight: 800, color: '#38b249' }}>Eco</span>
+        <span style={{ fontSize: '28px', fontWeight: 800, color: '#38b249' }}>Glamour</span>
         <span style={{ fontSize: '28px', fontWeight: 800, color: '#133857' }}>Dry</span>
       </div>
 

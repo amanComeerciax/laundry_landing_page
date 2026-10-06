@@ -58,7 +58,7 @@ export default function Testimonials() {
             Loved By 12,000+ Smart Households
           </h2>
           <p className="section-description">
-            Discover why residents, fashion designers, and working professionals trust EcoDry for their everyday and heirloom clothing care.
+            Discover why residents, fashion designers, and working professionals trust Glamour Dry for their everyday and heirloom clothing care.
           </p>
         </div>
 

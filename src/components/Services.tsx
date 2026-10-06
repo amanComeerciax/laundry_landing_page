@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { SERVICES, ServiceCategory } from '@/data/laundryData';
-import { Sparkles, Shirt, Flame, Footprints, Crown, Layers, Check, ArrowRight } from 'lucide-react';
+import { Sparkles, Shirt, Flame, Footprints, Crown, Layers, Check, ArrowRight, X } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -18,6 +19,7 @@ interface ServicesProps {
 export default function Services({ onSelectService }: ServicesProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const [selectedDetails, setSelectedDetails] = useState<ServiceCategory | null>(null);
 
   const getIcon = (iconName: string) => {
     switch (iconName) {
@@ -201,43 +203,168 @@ export default function Services({ onSelectService }: ServicesProps) {
                 </div>
 
                 {/* Book Action */}
-                <button
-                  onClick={() => onSelectService(service.title)}
-                  style={{
-                    marginTop: 'auto',
-                    width: '100%',
-                    padding: '12px',
-                    borderRadius: '12px',
-                    backgroundColor: '#f0f7fc',
-                    color: '#133857',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    transition: 'all 0.25s ease',
-                    border: '1px solid #cbd5e1',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#38b249';
-                    e.currentTarget.style.color = '#ffffff';
-                    e.currentTarget.style.borderColor = '#38b249';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#f0f7fc';
-                    e.currentTarget.style.color = '#133857';
-                    e.currentTarget.style.borderColor = '#cbd5e1';
-                  }}
-                >
-                  <span>Book {service.title.split(' ')[0]}</span>
-                  <ArrowRight size={15} />
-                </button>
+                <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', width: '100%' }}>
+                  <button
+                    onClick={() => setSelectedDetails(service)}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      borderRadius: '12px',
+                      backgroundColor: 'transparent',
+                      color: '#536e82',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '1px solid #cbd5e1',
+                      cursor: 'pointer',
+                      transition: 'all 0.25s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f1f5f9';
+                      e.currentTarget.style.color = '#133857';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = '#536e82';
+                    }}
+                  >
+                    View Details
+                  </button>
+                  <button
+                    onClick={() => onSelectService(service.title)}
+                    style={{
+                      flex: 1,
+                      padding: '12px',
+                      borderRadius: '12px',
+                      backgroundColor: '#f0f7fc',
+                      color: '#133857',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.25s ease',
+                      border: '1px solid transparent',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#38b249';
+                      e.currentTarget.style.color = '#ffffff';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f0f7fc';
+                      e.currentTarget.style.color = '#133857';
+                    }}
+                  >
+                    <span>Book Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Service Details Modal */}
+      {selectedDetails && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(4px)',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '20px',
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            borderRadius: '24px',
+            width: '100%',
+            maxWidth: '500px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            position: 'relative',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          }}>
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedDetails(null)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(4px)',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#64748b',
+                zIndex: 10,
+              }}
+            >
+              <X size={18} />
+            </button>
+
+            {/* Modal Image */}
+            <div style={{ position: 'relative', width: '100%', height: '220px' }}>
+              <Image
+                src={selectedDetails.image}
+                alt={selectedDetails.title}
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(19,56,87,0.8) 100%)' }} />
+              <div style={{ position: 'absolute', bottom: '20px', left: '24px', right: '24px' }}>
+                <div style={{ display: 'inline-flex', padding: '4px 10px', backgroundColor: '#38b249', color: '#fff', borderRadius: '8px', fontSize: '11px', fontWeight: 800, marginBottom: '8px' }}>
+                  FROM {selectedDetails.startingPrice}
+                </div>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>{selectedDetails.title}</h2>
+              </div>
+            </div>
+
+            {/* Modal Content */}
+            <div style={{ padding: '24px' }}>
+              <p style={{ fontSize: '15px', color: '#536e82', lineHeight: 1.6, marginBottom: '24px' }}>
+                {selectedDetails.description}
+              </p>
+
+              <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#133857', marginBottom: '12px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Included Features
+              </h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '32px' }}>
+                {selectedDetails.features.map((feat, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '14px', color: '#334155' }}>
+                    <span style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: '#ebf8ee', color: '#38b249', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Check size={14} strokeWidth={3} />
+                    </span>
+                    <span>{feat}</span>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  onSelectService(selectedDetails.title);
+                  setSelectedDetails(null);
+                }}
+                className="btn-primary"
+                style={{ width: '100%', padding: '16px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 8px 20px rgba(56, 178, 73, 0.3)' }}
+              >
+                Book Now <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

@@ -40,7 +40,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/mainhero.png"
-            alt="EcoDry laundry hero banner"
+            alt="Glamour Dry laundry hero banner"
             className="hero-bg-img"
           />
 
@@ -113,7 +113,7 @@ export default function Hero({ onOpenBooking }: HeroProps) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/lhero.png"
-            alt="EcoDry couple with laundry"
+            alt="Glamour Dry couple with laundry"
             className="hero-mobile-couple-img hero-anim-item"
           />
 

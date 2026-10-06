@@ -95,7 +95,7 @@ export default function HowItWorks({ onOpenBooking }: HowItWorksProps) {
             <span>Effortless & Contactless</span>
           </div>
           <h2 className="section-title">
-            How EcoDry Works
+            How Glamour Dry Works
           </h2>
           <p className="section-description">
             From scheduled pickup to hanger-fresh doorstep delivery, experience a truly seamless 5-step garment care journey.

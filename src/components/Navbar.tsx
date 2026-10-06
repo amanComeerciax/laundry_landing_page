@@ -2,13 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, Sparkles, ChevronRight, Phone, Leaf } from 'lucide-react';
+import { Menu, X, Sparkles, ChevronRight, Phone, Leaf, LogIn } from 'lucide-react';
+import { useAuth, UserButton } from '@clerk/nextjs';
 
 interface NavbarProps {
-  onOpenBooking: () => void;
+  onOpenBooking?: () => void;
 }
 
 export default function Navbar({ onOpenBooking }: NavbarProps) {
+  const { isSignedIn } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -64,19 +66,18 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           {/* Brand Logo */}
           <Link href="#home" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
             <div style={{ position: 'relative', width: '42px', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="44" stroke="#133857" strokeWidth="5" fill="#f8fbfe" />
-                <circle cx="50" cy="50" r="34" stroke="#0ea5e9" strokeWidth="4" strokeDasharray="160 50" strokeLinecap="round" />
-                <circle cx="50" cy="50" r="24" fill="#0284c7" fillOpacity="0.15" stroke="#38b249" strokeWidth="3" />
-                <path d="M35 52C40 48 44 56 50 52C56 48 60 56 65 52" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
-                <path d="M42 22C36 10 24 12 24 12C24 12 22 24 34 30C40 33 43 28 42 22Z" fill="#38b249" />
-                <path d="M26 14C34 22 36 28 36 28" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" />
-                <path d="M50 20C47 13 41 12 41 12C41 12 40 18 45 22C47 24 50 23 50 20Z" fill="#68d391" />
-              </svg>
+                <svg width="42" height="42" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="44" stroke="#133857" strokeWidth="5" fill="#f8fbfe" />
+                  <circle cx="50" cy="50" r="34" stroke="#0ea5e9" strokeWidth="4" strokeDasharray="160 50" strokeLinecap="round" />
+                  <circle cx="50" cy="50" r="24" fill="#0ea5e9" fillOpacity="0.1" />
+                  <path d="M35 52C40 48 44 56 50 52C56 48 60 56 65 52" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                  <path d="M30 10 Q 30 22 18 22 Q 30 22 30 34 Q 30 22 42 22 Q 30 22 30 10Z" fill="#38b249" />
+                  <path d="M48 14 Q 48 20 42 20 Q 48 20 48 26 Q 48 20 54 20 Q 48 20 48 14Z" fill="#0ea5e9" />
+                </svg>
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'baseline', lineHeight: 1 }}>
-                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#38b249', letterSpacing: '-0.02em' }}>Eco</span>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#38b249', letterSpacing: '-0.02em' }}>Glamour</span>
                 <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#133857', letterSpacing: '-0.02em' }}>Dry</span>
               </div>
               <div style={{ fontSize: '8.5px', fontWeight: 700, letterSpacing: '0.12em', color: '#536e82', textTransform: 'uppercase', marginTop: '3px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -103,13 +104,32 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
           {/* Desktop Actions */}
           <div className="desktop-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            {!isSignedIn && (
+              <Link href="/sign-in" className="nav-login-btn">
+                <LogIn size={16} />
+                <span>Sign In</span>
+              </Link>
+            )}
+            
+            {isSignedIn && (
+              <Link href="/dashboard" style={{ color: '#133857', fontWeight: 600, fontSize: '15px', textDecoration: 'none', marginRight: '4px' }}>
+                Dashboard
+              </Link>
+            )}
+
             <button
-              onClick={onOpenBooking}
+              onClick={() => onOpenBooking ? onOpenBooking() : (window.location.href = '/book')}
               className="btn-primary"
               style={{ padding: '11px 26px', fontSize: '15px', fontWeight: 700, boxShadow: '0 8px 20px rgba(56, 178, 73, 0.35)' }}
             >
               <span>Book a Pickup</span>
             </button>
+
+            {isSignedIn && (
+              <div style={{ marginLeft: '4px', paddingLeft: '20px', borderLeft: '2px solid #e2e8f0', display: 'flex', alignItems: 'center' }}>
+                <UserButton afterSignOutUrl="/" />
+              </div>
+            )}
           </div>
 
           {/* Mobile Hamburger — clean icon, no box */}
@@ -232,6 +252,20 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           flexDirection: 'column',
           gap: '12px',
         }}>
+          {/* Mobile Auth */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px dashed #e2e8f0' }}>
+            {!isSignedIn && (
+              <Link href="/sign-in" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#133857', fontWeight: 600, textDecoration: 'none', fontSize: '15.5px' }}>
+                <LogIn size={18} />
+                Sign In / Register
+              </Link>
+            )}
+            {isSignedIn && (
+              <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#133857', fontWeight: 600, textDecoration: 'none' }}>
+                My Account <UserButton afterSignOutUrl="/" />
+              </Link>
+            )}
+          </div>
           <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -248,7 +282,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           </div>
 
           <button
-            onClick={() => { closeMenu(); onOpenBooking(); }}
+            onClick={() => { closeMenu(); onOpenBooking ? onOpenBooking() : (window.location.href = '/book'); }}
             className="btn-primary"
             style={{ width: '100%', padding: '14px', justifyContent: 'center', fontSize: '15px', fontWeight: 700 }}
           >
@@ -256,7 +290,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           </button>
 
           <a
-            href="tel:+919007515150"
+            href="tel:+919265588226"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -273,12 +307,33 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
             }}
           >
             <Phone size={15} color="#38b249" />
-            <span>+91 90075 15150</span>
+            <span>+91 92655 88226</span>
           </a>
         </div>
       </div>
 
       <style jsx>{`
+        /* ─── Nav Buttons ─────────────────────────────────── */
+        .nav-login-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          border-radius: 9999px;
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #133857;
+          background: transparent;
+          border: 1.5px solid transparent;
+          text-decoration: none;
+          transition: all 0.2s ease;
+        }
+
+        .nav-login-btn:hover {
+          background-color: rgba(19, 56, 87, 0.05);
+          border-color: rgba(19, 56, 87, 0.1);
+        }
+
         /* ─── Show/hide desktop vs mobile ─────────────────── */
         @media (max-width: 900px) {
           .desktop-nav,

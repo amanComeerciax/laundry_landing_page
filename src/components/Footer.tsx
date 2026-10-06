@@ -40,12 +40,14 @@ export default function Footer() {
                 <svg width="38" height="38" viewBox="0 0 100 100" fill="none">
                   <circle cx="50" cy="50" r="44" stroke="#38b249" strokeWidth="5" fill="#133857" />
                   <circle cx="50" cy="50" r="34" stroke="#0ea5e9" strokeWidth="4" strokeDasharray="160 50" strokeLinecap="round" />
-                  <circle cx="50" cy="50" r="24" fill="#0284c7" fillOpacity="0.3" stroke="#38b249" strokeWidth="3" />
-                  <path d="M42 22C36 10 24 12 24 12C24 12 22 24 34 30C40 33 43 28 42 22Z" fill="#38b249" />
+                  <circle cx="50" cy="50" r="24" fill="#0ea5e9" fillOpacity="0.1" />
+                  <path d="M35 52C40 48 44 56 50 52C56 48 60 56 65 52" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                  <path d="M30 10 Q 30 22 18 22 Q 30 22 30 34 Q 30 22 42 22 Q 30 22 30 10Z" fill="#38b249" />
+                  <path d="M48 14 Q 48 20 42 20 Q 48 20 48 26 Q 48 20 54 20 Q 48 20 48 14Z" fill="#0ea5e9" />
                 </svg>
               </div>
               <div style={{ lineHeight: 1 }}>
-                <span style={{ fontSize: '24px', fontWeight: 800, color: '#38b249' }}>Eco</span>
+                <span style={{ fontSize: '24px', fontWeight: 800, color: '#38b249' }}>Glamour</span>
                 <span style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>Dry</span>
                 <div style={{ fontSize: '8px', letterSpacing: '0.12em', color: 'rgba(255, 255, 255, 0.6)', textTransform: 'uppercase', marginTop: '2px' }}>
                   Dry Cleaning & Laundry
@@ -60,19 +62,19 @@ export default function Footer() {
             {/* Direct Contacts */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <a
-                href="mailto:support@ecodrylaundry.com"
+                href="mailto:support@glamourdry.com"
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', color: '#e2e8f0', textDecoration: 'none' }}
               >
                 <Mail size={15} color="#38b249" />
-                <span>support@ecodrylaundry.com</span>
+                <span>support@glamourdry.com</span>
               </a>
 
               <a
-                href="tel:+919007515150"
+                href="tel:+919265588226"
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', color: '#e2e8f0', textDecoration: 'none' }}
               >
                 <Phone size={15} color="#38b249" />
-                <span>+91 90075 15150 / +91 90075 15159</span>
+                <span>+91 92655 88226</span>
               </a>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
@@ -236,12 +238,13 @@ export default function Footer() {
           color: '#64748b',
         }}>
           <div>
-            © {new Date().getFullYear()} EcoDry Laundry & Dry Cleaning Services. All rights reserved.
+            © {new Date().getFullYear()} Glamour Dry Laundry & Dry Cleaning Services. All rights reserved.
           </div>
           <div style={{ display: 'flex', gap: '20px' }}>
             <a href="#home" style={{ color: '#94a3b8' }}>Privacy Policy</a>
             <a href="#home" style={{ color: '#94a3b8' }}>Terms of Service</a>
             <a href="#home" style={{ color: '#94a3b8' }}>Garment Care Guarantee</a>
+            <a href="/admin/login" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>Admin Login</a>
           </div>
         </div>
       </div>

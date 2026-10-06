@@ -51,7 +51,7 @@ export default function WhyEcoDry() {
             <span>The Green Cleaning Difference</span>
           </div>
           <h2 className="section-title">
-            Why EcoDry Outperforms Traditional Cleaners
+            Why Glamour Dry Outperforms Traditional Cleaners
           </h2>
           <p className="section-description">
             Traditional dry cleaning uses Perchloroethylene (PERC)—a known toxin that damages clothes and the environment. Here is how we revolutionized fabric care.
@@ -89,7 +89,7 @@ export default function WhyEcoDry() {
             <div>Garment Care Factor</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#68d391' }}>
               <ShieldCheck size={18} />
-              <span>EcoDry Organic Method</span>
+              <span>Glamour Dry Organic Method</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cbd5e1' }}>
               <XCircle size={18} color="#f87171" />
@@ -134,7 +134,7 @@ export default function WhyEcoDry() {
                   <CheckCircle2 size={13} />
                 </span>
                 <div>
-                  <div className="mobile-only-label" style={{ display: 'none', fontSize: '11px', fontWeight: 800, color: '#15803d', textTransform: 'uppercase', marginBottom: '2px', letterSpacing: '0.05em' }}>EcoDry Organic</div>
+                  <div className="mobile-only-label" style={{ display: 'none', fontSize: '11px', fontWeight: 800, color: '#15803d', textTransform: 'uppercase', marginBottom: '2px', letterSpacing: '0.05em' }}>Glamour Dry Organic</div>
                   <span>{row.ecodry}</span>
                 </div>
               </div>

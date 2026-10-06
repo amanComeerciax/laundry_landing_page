@@ -335,3 +335,170 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* Dashboard Responsiveness */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+}
+
+.dashboard-sidebar {
+  width: 280px;
+  background-color: #ffffff;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+.dashboard-header {
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-content {
+  padding: 0 40px 40px 40px;
+  flex: 1;
+}
+
+.dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dashboard-two-col {
+  display: grid; 
+  grid-template-columns: 1fr 1.5fr; 
+  gap: 32px; 
+  margin-top: 32px;
+}
+
+.eco-impact-banner {
+  margin-top: 32px;
+  background: linear-gradient(135deg, #38b249 0%, #16a34a 100%);
+  border-radius: 24px;
+  padding: 32px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(56, 178, 73, 0.2);
+}
+
+.eco-impact-stats {
+  display: flex; 
+  gap: 32px; 
+  text-align: center;
+}
+
+/* Dashboard Hamburger */
+.dashboard-mobile-toggle {
+  display: none;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .dashboard-mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #133857;
+    cursor: pointer;
+    margin-right: 12px;
+  }
+  
+  /* Off-canvas sidebar */
+  .dashboard-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 999;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: none;
+  }
+  
+  .dashboard-sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: 10px 0 40px rgba(0,0,0,0.15);
+  }
+  
+  /* Overlay */
+  .sidebar-overlay.mobile-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    z-index: 998;
+    backdrop-filter: blur(2px);
+  }
+  
+  .dashboard-header {
+    padding: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .dashboard-header-top {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .dashboard-content {
+    padding: 0 20px 40px 20px;
+  }
+  
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-two-col {
+    grid-template-columns: 1fr;
+  }
+  
+  .eco-impact-banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+    padding: 24px;
+  }
+  
+  .eco-impact-banner h3 {
+    justify-content: center;
+  }
+  
+  .eco-impact-stats {
+    width: 100%;
+    justify-content: center;
+  }
+}

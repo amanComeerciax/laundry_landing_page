@@ -24,7 +24,7 @@ export default function TopBar() {
         {/* Left: Email contact */}
         <div className="topbar-email" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <a
-            href="mailto:support@ecodrylaundry.com"
+            href="mailto:support@glamourdry.com"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -50,7 +50,7 @@ export default function TopBar() {
             }}>
               <Mail size={13} strokeWidth={2.2} />
             </span>
-            <span>support@ecodrylaundry.com</span>
+            <span>support@glamourdry.com</span>
           </a>
         </div>
 
@@ -76,7 +76,7 @@ export default function TopBar() {
         {/* Right: Phone contact from image */}
         <div className="topbar-phone" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <a
-            href="tel:+919007515150"
+            href="tel:+919265588226"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -103,7 +103,7 @@ export default function TopBar() {
             }}>
               <Phone size={13} strokeWidth={2.2} />
             </span>
-            <span>+91 90075 15150 / +91 90075 15159</span>
+            <span>+91 92655 88226</span>
           </a>
         </div>
       </div>

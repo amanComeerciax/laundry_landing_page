@@ -121,7 +121,7 @@ export const HOW_IT_WORKS_STEPS = [
     step: '02',
     title: 'Contactless Doorstep Collection',
     subtitle: 'Free pickup above ₹350',
-    description: 'Our trained EcoDry captain arrives with sterile reusable hampers to safely weigh or itemize your garments.',
+    description: 'Our trained Glamour Dry captain arrives with sterile reusable hampers to safely weigh or itemize your garments.',
     icon: 'Truck',
     badge: 'RFID Tagging',
   },
@@ -198,7 +198,7 @@ export const TESTIMONIALS = [
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     service: 'Bridal & Silk Saree Care',
-    text: 'I entrusted my heirloom Kanjeevaram wedding saree to EcoDry after a bad experience elsewhere. They returned it in pristine condition without any chemical smell. The gold zari sparkled like day one!',
+    text: 'I entrusted my heirloom Kanjeevaram wedding saree to Glamour Dry after a bad experience elsewhere. They returned it in pristine condition without any chemical smell. The gold zari sparkled like day one!',
     verified: true,
   },
   {
@@ -218,7 +218,7 @@ export const TESTIMONIALS = [
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     service: 'Quilts & Hypoallergenic Laundry',
-    text: 'My children have sensitive skin, so traditional dry cleaning chemical residues were always a worry. EcoDry’s bio-friendly process leaves zero harsh odor. Absolutely the best laundry service in town.',
+    text: 'My children have sensitive skin, so traditional dry cleaning chemical residues were always a worry. Glamour Dry’s bio-friendly process leaves zero harsh odor. Absolutely the best laundry service in town.',
     verified: true,
   },
   {
@@ -235,8 +235,8 @@ export const TESTIMONIALS = [
 
 export const FAQS = [
   {
-    question: 'What is the difference between EcoDry organic cleaning and regular dry cleaning?',
-    answer: 'Traditional dry cleaners use Perchloroethylene (PERC), a harsh petroleum-derived chemical that leaves an oily residue and odor, damages fibers, and is harmful to skin. EcoDry uses organic, biodegradable hydrocarbon solvents and gentle steam technology that leaves your garments smelling naturally fresh and extends fabric life by up to 3x.',
+    question: 'What is the difference between Glamour Dry organic cleaning and regular dry cleaning?',
+    answer: 'Traditional dry cleaners use Perchloroethylene (PERC), a harsh petroleum-derived chemical that leaves an oily residue and odor, damages fibers, and is harmful to skin. Glamour Dry uses organic, biodegradable hydrocarbon solvents and gentle steam technology that leaves your garments smelling naturally fresh and extends fabric life by up to 3x.',
   },
   {
     question: 'How do I avail free pickup and delivery?',
