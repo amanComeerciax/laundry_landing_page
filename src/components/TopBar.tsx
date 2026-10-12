@@ -24,7 +24,7 @@ export default function TopBar() {
         {/* Left: Email contact */}
         <div className="topbar-email" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <a
-            href="mailto:support@glamourdry.com"
+            href="mailto:memonljku@gmail.com"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -50,7 +50,7 @@ export default function TopBar() {
             }}>
               <Mail size={13} strokeWidth={2.2} />
             </span>
-            <span>support@glamourdry.com</span>
+            <span>memonljku@gmail.com</span>
           </a>
         </div>
 
@@ -76,7 +76,7 @@ export default function TopBar() {
         {/* Right: Phone contact from image */}
         <div className="topbar-phone" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <a
-            href="tel:+919265588226"
+            href="tel:+916355090297"
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -103,7 +103,7 @@ export default function TopBar() {
             }}>
               <Phone size={13} strokeWidth={2.2} />
             </span>
-            <span>+91 92655 88226</span>
+            <span>+91 63550 90297</span>
           </a>
         </div>
       </div>

@@ -13,6 +13,10 @@ export interface IOrder extends Document {
   address: string;
   phone: string;
   notes?: string;
+  paymentMethod?: 'online' | 'cod';
+  paymentStatus?: 'pending' | 'paid' | 'failed';
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
   status: 'pickup' | 'processing' | 'delivery' | 'completed';
   createdAt: Date;
 }
@@ -30,6 +34,10 @@ const OrderSchema: Schema = new Schema({
   address: { type: String, required: true },
   phone: { type: String, required: true },
   notes: { type: String, required: false },
+  paymentMethod: { type: String, enum: ['online', 'cod'], default: 'cod' },
+  paymentStatus: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
+  razorpayPaymentId: { type: String, required: false },
+  razorpayOrderId: { type: String, required: false },
   status: { 
     type: String, 
     required: true,
@@ -37,6 +45,11 @@ const OrderSchema: Schema = new Schema({
     default: 'pickup'
   },
   createdAt: { type: Date, default: Date.now },
-});
+}, { strict: false });
 
-export const Order: Model<IOrder> = mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
+if (mongoose.models && mongoose.models.Order) {
+  delete (mongoose.models as any).Order;
+}
+
+export const Order: Model<IOrder> = mongoose.model<IOrder>('Order', OrderSchema);
+

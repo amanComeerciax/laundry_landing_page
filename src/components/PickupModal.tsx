@@ -42,9 +42,21 @@ export default function PickupModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const randomId = 'ECO-' + Math.floor(100000 + Math.random() * 900000);
+    const randomId = 'GLAM-' + Math.floor(100000 + Math.random() * 900000);
     setBookingId(randomId);
     setStep(2);
+
+    // Send email notification to admin via /api/contact
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name,
+        phone,
+        service,
+        message: `Doorstep Pickup Booking ID: ${randomId}\nPickup Date: ${date}\nPreferred Time: ${timeSlot}\nAddress: ${address}${pincode ? ` (PIN: ${pincode})` : ''}\nEstimated Items: ${initialItems || 'Standard Booking'}\nEstimated Amount: ₹${initialTotal}`
+      })
+    }).catch(err => console.error('[PickupModal] Email error:', err));
 
     // Launch confetti!
     try {
@@ -421,7 +433,7 @@ export default function PickupModal({
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <a
-                  href={`https://wa.me/919265588226?text=Hi%20Glamour%20Dry,%20I%20have%20scheduled%20pickup%20booking%20${bookingId}%20for%20${name}`}
+                  href={`https://wa.me/916355090297?text=Hi%20Glamour%20Dry,%20I%20have%20scheduled%20pickup%20booking%20${bookingId}%20for%20${name}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-primary"
@@ -436,17 +448,37 @@ export default function PickupModal({
                   <span>Track / Chat on WhatsApp</span>
                 </a>
 
-                <button
-                  onClick={handleReset}
-                  className="btn-outline"
-                  style={{
-                    padding: '12px',
-                    fontSize: '14px',
-                    borderRadius: '12px',
-                  }}
-                >
-                  <span>Close Window</span>
-                </button>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    style={{
+                      padding: '12px',
+                      fontSize: '14px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #cbd5e1',
+                      backgroundColor: '#ffffff',
+                      color: '#475569',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span>← Previous Step</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="btn-outline"
+                    style={{
+                      padding: '12px',
+                      fontSize: '14px',
+                      borderRadius: '12px',
+                    }}
+                  >
+                    <span>Close Window</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}

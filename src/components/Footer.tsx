@@ -62,19 +62,19 @@ export default function Footer() {
             {/* Direct Contacts */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <a
-                href="mailto:support@glamourdry.com"
+                href="mailto:memonljku@gmail.com"
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', color: '#e2e8f0', textDecoration: 'none' }}
               >
                 <Mail size={15} color="#38b249" />
-                <span>support@glamourdry.com</span>
+                <span>memonljku@gmail.com</span>
               </a>
 
               <a
-                href="tel:+919265588226"
+                href="tel:+916355090297"
                 style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13.5px', color: '#e2e8f0', textDecoration: 'none' }}
               >
                 <Phone size={15} color="#38b249" />
-                <span>+91 92655 88226</span>
+                <span>+91 63550 90297</span>
               </a>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
@@ -91,32 +91,32 @@ export default function Footer() {
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px' }}>
               <li>
-                <a href="#services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                <a href="/services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
                   Organic Dry Cleaning
                 </a>
               </li>
               <li>
-                <a href="#services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                <a href="/services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
                   Premium Wash & Steam Press
                 </a>
               </li>
               <li>
-                <a href="#services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                <a href="/services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
                   Bridal & Silk Saree Care
                 </a>
               </li>
               <li>
-                <a href="#services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                <a href="/services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
                   Sneaker & Leather Spa
                 </a>
               </li>
               <li>
-                <a href="#services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
+                <a href="/services" style={{ color: '#94a3b8', transition: 'color 0.2s' }} onMouseEnter={(e) => (e.currentTarget.style.color = '#38b249')} onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}>
                   Curtains & Heavy Quilts
                 </a>
               </li>
               <li>
-                <a href="#calculator" style={{ color: '#38b249', fontWeight: 600 }}>
+                <a href="/pricing" style={{ color: '#38b249', fontWeight: 600 }}>
                   Live Price Estimator →
                 </a>
               </li>

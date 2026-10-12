@@ -62,7 +62,7 @@ export default function AdminDashboard() {
 
 
       socket.on('order_created', (newOrder) => {
-        const msg = `New booking received: ${newOrder.orderId}`;
+        const msg = `New booking received: ${newOrder.orderId?.replace(/^#/, '')}`;
         toast.success(msg);
         setNotifications(prev => [{ id: Date.now().toString(), message: msg, read: false }, ...prev]);
         // Refetch orders when a new order comes in
@@ -239,8 +239,35 @@ export default function AdminDashboard() {
       <div className={`sidebar-overlay ${isMobileMenuOpen ? 'mobile-open' : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
       <aside className={`dashboard-sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`} style={{ backgroundColor: '#133857', color: '#ffffff' }}>
         <div style={{ padding: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 800, fontFamily: 'var(--font-heading)' }}>Eco<span style={{ color: '#38b249' }}>Dry</span></h2>
-          <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>Admin Workspace</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '12px',
+              backgroundColor: '#ffffff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              flexShrink: 0
+            }}>
+              <svg width="26" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="44" stroke="#133857" strokeWidth="5" fill="#f8fbfe" />
+                <circle cx="50" cy="50" r="34" stroke="#0ea5e9" strokeWidth="4" strokeDasharray="160 50" strokeLinecap="round" />
+                <circle cx="50" cy="50" r="24" fill="#0ea5e9" fillOpacity="0.1" />
+                <path d="M35 52C40 48 44 56 50 52C56 48 60 56 65 52" stroke="#0284c7" strokeWidth="3" strokeLinecap="round" />
+                <path d="M30 10 Q 30 22 18 22 Q 30 22 30 34 Q 30 22 42 22 Q 30 22 30 10Z" fill="#38b249" />
+                <path d="M48 14 Q 48 20 42 20 Q 48 20 48 26 Q 48 20 54 20 Q 48 20 48 14Z" fill="#0ea5e9" />
+              </svg>
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'baseline', lineHeight: 1 }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 800, color: '#38b249', letterSpacing: '-0.02em' }}>Glamour</span>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>Dry</span>
+              </div>
+              <p style={{ fontSize: '11px', color: '#94a3b8', marginTop: '4px', fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>Admin Workspace</p>
+            </div>
+          </div>
         </div>
         
         <nav style={{ padding: '20px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -284,19 +311,24 @@ export default function AdminDashboard() {
             <button className="dashboard-mobile-toggle" onClick={() => setIsMobileMenuOpen(true)}>
               <Menu size={20} />
             </button>
-            <div>
-            <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)' }}>
-              {activeTab === 'dashboard' && 'Dashboard Overview'}
-              {activeTab === 'orders' && 'All Orders'}
-              {activeTab === 'customers' && 'Customers'}
-              {activeTab === 'services' && 'Manage Services'}
-            </h1>
-            <p style={{ color: '#64748b', marginTop: '4px' }}>
-              {activeTab === 'dashboard' && 'Manage bookings and track operations.'}
-              {activeTab === 'orders' && 'View and manage the full history of all bookings.'}
-              {activeTab === 'customers' && 'View your customer base and their activity.'}
-              {activeTab === 'services' && 'Create and update the services shown on the user app.'}
-            </p>
+            <div style={{ flex: 1 }}>
+              <div className="admin-mobile-brand" style={{ display: 'none', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: '#38b249', lineHeight: 1 }}>Glamour</span>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: '#133857', lineHeight: 1 }}>Dry</span>
+                <span style={{ fontSize: '10px', backgroundColor: '#e2e8f0', color: '#475569', padding: '2px 6px', borderRadius: '6px', fontWeight: 700 }}>ADMIN</span>
+              </div>
+              <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#0f172a', fontFamily: 'var(--font-heading)' }}>
+                {activeTab === 'dashboard' && 'Dashboard Overview'}
+                {activeTab === 'orders' && 'All Orders'}
+                {activeTab === 'customers' && 'Customers'}
+                {activeTab === 'services' && 'Manage Services'}
+              </h1>
+              <p style={{ color: '#64748b', marginTop: '4px' }}>
+                {activeTab === 'dashboard' && 'Manage bookings and track operations.'}
+                {activeTab === 'orders' && 'View and manage the full history of all bookings.'}
+                {activeTab === 'customers' && 'View your customer base and their activity.'}
+                {activeTab === 'services' && 'Create and update the services shown on the user app.'}
+              </p>
             </div>
           </div>
           <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative' }}>
@@ -316,22 +348,29 @@ export default function AdminDashboard() {
             </button>
 
             {showNotifications && (
-              <div style={{ position: 'absolute', top: '56px', right: '0', width: '320px', backgroundColor: '#ffffff', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0', zIndex: 100, overflow: 'hidden' }}>
-                <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h4 style={{ fontWeight: 700, color: '#133857' }}>Notifications</h4>
+              <>
+                <div 
+                  onClick={() => setShowNotifications(false)} 
+                  style={{ position: 'fixed', inset: 0, zIndex: 90 }}
+                />
+                <div className="notification-dropdown">
+                  <div style={{ padding: '16px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h4 style={{ fontWeight: 700, color: '#133857' }}>Notifications</h4>
+                    <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', fontSize: '12px', color: '#64748b', cursor: 'pointer', fontWeight: 600 }}>Close</button>
+                  </div>
+                  <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {notifications.length === 0 ? (
+                      <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', fontSize: '14px' }}>No new notifications</div>
+                    ) : (
+                      notifications.map(notif => (
+                        <div key={notif.id} style={{ padding: '16px', borderBottom: '1px solid #f1f5f9', backgroundColor: notif.read ? '#ffffff' : '#f0fdf4' }}>
+                          <p style={{ fontSize: '13.5px', color: '#0f172a', fontWeight: notif.read ? 500 : 600, lineHeight: 1.4 }}>{notif.message}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
-                <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                  {notifications.length === 0 ? (
-                    <div style={{ padding: '24px', textAlign: 'center', color: '#64748b', fontSize: '14px' }}>No new notifications</div>
-                  ) : (
-                    notifications.map(notif => (
-                      <div key={notif.id} style={{ padding: '16px', borderBottom: '1px solid #f1f5f9', backgroundColor: notif.read ? '#ffffff' : '#f0fdf4' }}>
-                        <p style={{ fontSize: '14px', color: '#0f172a', fontWeight: notif.read ? 500 : 600 }}>{notif.message}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+              </>
             )}
 
             {activeTab === 'services' && (
@@ -388,7 +427,8 @@ export default function AdminDashboard() {
                   <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Order ID</th>
                   <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Date & Time</th>
                   <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Address & Phone</th>
-                  <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Service</th>
+                  <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Service & Price</th>
+                  <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Payment Mode</th>
                   <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Status</th>
                   <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -396,7 +436,7 @@ export default function AdminDashboard() {
               <tbody>
                 {orders.slice(0, 5).map((order) => (
                   <tr key={order._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '20px 24px', fontWeight: 700, color: '#0f172a' }}>{order.orderId}</td>
+                    <td style={{ padding: '20px 24px', fontWeight: 700, color: '#0f172a' }}>{order.orderId?.replace(/^#/, '')}</td>
                     <td style={{ padding: '20px 24px', color: '#475569', fontSize: '14px' }}>
                       <div style={{ fontWeight: 600 }}>{order.pickupDate}</div>
                       <div style={{ fontSize: '13px', color: '#94a3b8' }}>{order.pickupTime}</div>
@@ -406,8 +446,51 @@ export default function AdminDashboard() {
                       <div style={{ fontSize: '13px', color: '#94a3b8' }}>{order.phone}</div>
                     </td>
                     <td style={{ padding: '20px 24px', color: '#475569', fontSize: '14px' }}>
-                      <div style={{ fontWeight: 600 }}>{order.service}</div>
-                      <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 600 }}>₹{order.totalAmount}</div>
+                      <div style={{ fontWeight: 700, color: '#0f172a' }}>{order.service}</div>
+                      <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 800, marginTop: '2px' }}>₹{order.totalAmount}</div>
+                    </td>
+                    <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
+                      {(order.paymentMethod === 'online' || order.paymentStatus === 'paid' || Boolean(order.razorpayPaymentId)) ? (
+                        <div>
+                          <span style={{ 
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '4px 10px', 
+                            borderRadius: '8px', 
+                            fontSize: '12px', 
+                            fontWeight: 800, 
+                            backgroundColor: '#dcfce7', 
+                            color: '#15803d',
+                            border: '1px solid rgba(22, 163, 74, 0.2)'
+                          }}>
+                            💳 Online Paid
+                          </span>
+                          <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                            Razorpay {order.razorpayPaymentId ? `• ${order.razorpayPaymentId.slice(-6)}` : ''}
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <span style={{ 
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '4px 10px', 
+                            borderRadius: '8px', 
+                            fontSize: '12px', 
+                            fontWeight: 800, 
+                            backgroundColor: '#fef3c7', 
+                            color: '#b45309',
+                            border: '1px solid rgba(217, 119, 6, 0.2)'
+                          }}>
+                            💵 Cash on Delivery
+                          </span>
+                          <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#b45309', fontWeight: 600 }}>
+                            Collect ₹{order.totalAmount} at doorstep
+                          </p>
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '20px 24px' }}>
                       <select 
@@ -470,7 +553,8 @@ export default function AdminDashboard() {
                     <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Order ID</th>
                     <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Date & Time</th>
                     <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Address & Phone</th>
-                    <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Service</th>
+                    <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Service & Price</th>
+                    <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Payment Mode</th>
                     <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Status</th>
                     <th style={{ padding: '16px 24px', fontSize: '13px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
                   </tr>
@@ -478,7 +562,7 @@ export default function AdminDashboard() {
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '20px 24px', fontWeight: 700, color: '#0f172a' }}>{order.orderId}</td>
+                      <td style={{ padding: '20px 24px', fontWeight: 700, color: '#0f172a' }}>{order.orderId?.replace(/^#/, '')}</td>
                       <td style={{ padding: '20px 24px', color: '#475569', fontSize: '14px' }}>
                         <div style={{ fontWeight: 600 }}>{order.pickupDate}</div>
                         <div style={{ fontSize: '13px', color: '#94a3b8' }}>{order.pickupTime}</div>
@@ -488,8 +572,51 @@ export default function AdminDashboard() {
                         <div style={{ fontSize: '13px', color: '#94a3b8' }}>{order.phone}</div>
                       </td>
                       <td style={{ padding: '20px 24px', color: '#475569', fontSize: '14px' }}>
-                        <div style={{ fontWeight: 600 }}>{order.service}</div>
-                        <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 600 }}>₹{order.totalAmount}</div>
+                        <div style={{ fontWeight: 700, color: '#0f172a' }}>{order.service}</div>
+                        <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 800, marginTop: '2px' }}>₹{order.totalAmount}</div>
+                      </td>
+                      <td style={{ padding: '20px 24px', whiteSpace: 'nowrap' }}>
+                        {(order.paymentMethod === 'online' || order.paymentStatus === 'paid' || Boolean(order.razorpayPaymentId)) ? (
+                          <div>
+                            <span style={{ 
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '4px 10px', 
+                              borderRadius: '8px', 
+                              fontSize: '12px', 
+                              fontWeight: 800, 
+                              backgroundColor: '#dcfce7', 
+                              color: '#15803d',
+                              border: '1px solid rgba(22, 163, 74, 0.2)'
+                            }}>
+                              💳 Online Paid
+                            </span>
+                            <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
+                              Razorpay {order.razorpayPaymentId ? `• ${order.razorpayPaymentId.slice(-6)}` : ''}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <span style={{ 
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '4px 10px', 
+                              borderRadius: '8px', 
+                              fontSize: '12px', 
+                              fontWeight: 800, 
+                              backgroundColor: '#fef3c7', 
+                              color: '#b45309',
+                              border: '1px solid rgba(217, 119, 6, 0.2)'
+                            }}>
+                              💵 Cash on Delivery
+                            </span>
+                            <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#b45309', fontWeight: 600 }}>
+                              Collect ₹{order.totalAmount} at doorstep
+                            </p>
+                          </div>
+                        )}
                       </td>
                       <td style={{ padding: '20px 24px' }}>
                         <select 
@@ -634,7 +761,7 @@ export default function AdminDashboard() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100 }}>
           <div style={{ backgroundColor: '#ffffff', borderRadius: '24px', padding: '32px', width: '500px', maxWidth: '90%', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a' }}>Edit Order: {editingOrder.orderId}</h2>
+              <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a' }}>Edit Order: {editingOrder.orderId?.replace(/^#/, '')}</h2>
               <button onClick={() => setEditingOrder(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}><X size={24} /></button>
             </div>
             
@@ -658,6 +785,34 @@ export default function AdminDashboard() {
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>Total Amount (₹)</label>
                 <input type="number" value={editForm.totalAmount || 0} onChange={e => setEditForm({...editForm, totalAmount: Number(e.target.value)})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }} />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#475569', marginBottom: '8px' }}>Payment Mode & Status</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                  <select 
+                    value={editForm.paymentMethod || 'cod'} 
+                    onChange={e => setEditForm({...editForm, paymentMethod: e.target.value})}
+                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff', fontWeight: 600 }}
+                  >
+                    <option value="cod">Cash on Delivery (COD)</option>
+                    <option value="online">Online (Razorpay)</option>
+                  </select>
+                  <select 
+                    value={editForm.paymentStatus || 'pending'} 
+                    onChange={e => setEditForm({...editForm, paymentStatus: e.target.value})}
+                    style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', backgroundColor: '#fff', fontWeight: 600 }}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="paid">Paid</option>
+                    <option value="failed">Failed</option>
+                  </select>
+                </div>
+                {editForm.razorpayPaymentId && (
+                  <p style={{ fontSize: '12px', color: '#64748b', marginTop: '6px' }}>
+                    Razorpay ID: <code>{editForm.razorpayPaymentId}</code>
+                  </p>
+                )}
               </div>
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>

@@ -17,7 +17,7 @@ export default function CtaBanner({ onOpenBooking }: CtaBannerProps) {
   const [copied, setCopied] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
 
-  const promoCode = 'ECOFIRST20';
+  const promoCode = 'GLAMOUR20';
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(promoCode);

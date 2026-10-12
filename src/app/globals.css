@@ -474,8 +474,12 @@ button {
     width: 100%;
   }
 
+  .admin-mobile-brand {
+    display: flex !important;
+  }
+
   .dashboard-content {
-    padding: 0 20px 40px 20px;
+    padding: 0 16px 40px 16px;
   }
   
   .dashboard-stats-grid {
@@ -501,4 +505,261 @@ button {
     width: 100%;
     justify-content: center;
   }
+
+  .notification-dropdown {
+    position: fixed !important;
+    top: 76px !important;
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    z-index: 1000 !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  /* Order Cards Mobile Layout */
+  .order-card {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    gap: 14px !important;
+  }
+
+  .order-card-left {
+    gap: 12px !important;
+    width: 100% !important;
+    align-items: flex-start !important;
+  }
+
+  .order-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 12px !important;
+  }
+
+  .order-card-title-row {
+    gap: 8px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .order-card-title {
+    font-size: 15px !important;
+  }
+
+  .order-card-id {
+    font-size: 12px !important;
+  }
+
+  .order-card-badge {
+    padding: 3px 8px !important;
+    font-size: 10.5px !important;
+  }
+
+  .order-card-meta {
+    font-size: 12px !important;
+  }
+
+  .order-card-divider {
+    display: block !important;
+    height: 1px !important;
+    background-color: #f1f5f9 !important;
+    width: 100% !important;
+  }
+
+  .order-card-right {
+    width: 100% !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .order-card-price-block {
+    text-align: left !important;
+  }
+
+  .order-card-price-label {
+    font-size: 11px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+  }
+
+  .order-card-price-val {
+    font-size: 17px !important;
+  }
+
+  .order-card-actions {
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+  }
+
+  .order-btn-reschedule {
+    padding: 7px 11px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .order-btn-details {
+    padding: 7px 13px !important;
+    font-size: 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .order-filter-bar {
+    gap: 8px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .order-filter-pill {
+    padding: 8px 14px !important;
+    font-size: 12.5px !important;
+  }
+
+  .dashboard-modal-card {
+    padding: 20px 16px !important;
+    border-radius: 20px !important;
+  }
+
+  .dashboard-page-title {
+    font-size: 22px !important;
+  }
+
+  .dashboard-page-subtitle {
+    font-size: 13.5px !important;
+  }
+
+  .header-actions {
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
 }
+
+.notification-dropdown {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  z-index: 100;
+  overflow: hidden;
+}
+
+/* Order Cards Base Styles (Desktop & General) */
+.order-card {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.order-card-left {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  min-width: 0;
+  flex: 1;
+}
+
+.order-card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: #f8fafc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  color: #64748b;
+}
+
+.order-card-details {
+  min-width: 0;
+  flex: 1;
+}
+
+.order-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.order-card-title {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 18px;
+  margin: 0;
+}
+
+.order-card-id {
+  color: #64748b;
+  font-size: 13px;
+  fontWeight: 700;
+}
+
+.order-card-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.order-card-meta {
+  color: #64748b;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.order-card-divider {
+  display: none;
+}
+
+.order-card-right {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-shrink: 0;
+}
+
+.order-card-price-block {
+  text-align: right;
+}
+
+.order-card-price-label {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  margin-top: 0;
+}
+
+.order-card-price-val {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 18px;
+  margin: 0;
+}
+
+.order-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+

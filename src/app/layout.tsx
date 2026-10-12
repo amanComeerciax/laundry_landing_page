@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Preloader from "@/components/Preloader";
@@ -31,6 +32,14 @@ export const metadata: Metadata = {
     locale: "en_IN",
     type: "website",
   },
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +52,7 @@ export default function RootLayout({
       <html lang="en" className={`${outfit.variable} ${plusJakartaSans.variable}`}>
         <body className="antialiased">
           <Preloader />
+          <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
           <Toaster position="top-right" toastOptions={{ duration: 4000, style: { padding: '16px', borderRadius: '12px', fontSize: '15px', fontWeight: 600, color: '#133857' } }} />
           {children}
         </body>

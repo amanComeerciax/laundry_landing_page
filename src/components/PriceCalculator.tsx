@@ -1,8 +1,19 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { CALCULATOR_ITEMS, ServiceItem } from '@/data/laundryData';
-import { Calculator, Plus, Minus, ShoppingBag, CheckCircle2, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { 
+  Calculator, 
+  Plus, 
+  Minus, 
+  ShoppingBag, 
+  CheckCircle2, 
+  Sparkles, 
+  ArrowRight, 
+  RotateCcw,
+  Shirt,
+  Flame,
+  Crown
+} from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -10,19 +21,96 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+export interface CalculatorService {
+  id: string;
+  title: string;
+  category: string;
+  price: number;
+  description: string;
+  popular?: boolean;
+  icon?: string;
+}
+
+const DEFAULT_SERVICES: CalculatorService[] = [
+  {
+    id: '6abcb302f2a3b59e1245707b',
+    title: 'Premium Dry Cleaning',
+    category: 'Dry Cleaning',
+    price: 300,
+    description: 'Gentle organic hydrocarbon cleaning for suits, sarees, lehengas & delicate designer wear.',
+    popular: true,
+    icon: 'Sparkles',
+  },
+  {
+    id: '6abcb335f2a3b59e1245707c',
+    title: 'Wash & Fold',
+    category: 'Wash & Fold',
+    price: 500,
+    description: 'Everyday laundry washed with bio-safe enzymes, hygienically dried, and neatly folded.',
+    popular: false,
+    icon: 'Shirt',
+  },
+  {
+    id: '6abcb34ef2a3b59e1245707d',
+    title: 'Iron Your Cloths',
+    category: 'Ironing',
+    price: 100,
+    description: 'High-temperature vacuum table industrial steam pressing for crisp, zero-shine creases.',
+    popular: false,
+    icon: 'Flame',
+  },
+  {
+    id: '6abcb378f2a3b59e1245707e',
+    title: 'Special Combo',
+    category: 'Special Care',
+    price: 1000,
+    description: 'Complete all-in-one wardrobe care: Wash, Steam Iron & Dry Clean all included in one package.',
+    popular: true,
+    icon: 'Crown',
+  },
+];
+
 interface PriceCalculatorProps {
   onBookWithItems: (itemsSummary: string, total: number) => void;
 }
 
 export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProps) {
-  const [selectedCategory, setSelectedCategory] = useState<'men' | 'women' | 'household' | 'specialty'>('men');
+  const [services, setServices] = useState<CalculatorService[]>(DEFAULT_SERVICES);
   const [quantities, setQuantities] = useState<Record<string, number>>({
-    'm-shirt': 2,
-    'm-trouser': 2,
-    'w-saree': 1,
+    '6abcb302f2a3b59e1245707b': 1,
   });
 
   const sectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Fetch live services from database to stay in sync with admin panel
+    fetch('/api/services')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.services) && data.services.length > 0) {
+          setServices(
+            data.services.map((s: any) => ({
+              id: s._id || s.id,
+              title: s.title,
+              category: s.category || 'General Care',
+              price: Number(s.price) || 0,
+              description: s.description || '',
+              popular: Boolean(s.popular),
+              icon: s.category === 'Dry Cleaning' 
+                ? 'Sparkles' 
+                : s.category === 'Ironing' 
+                ? 'Flame' 
+                : s.category === 'Special Care' 
+                ? 'Crown' 
+                : 'Shirt',
+            }))
+          );
+        }
+      })
+      .catch((err) => {
+        console.error('Error loading services for calculator:', err);
+      });
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -72,13 +160,39 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
     setQuantities({});
   };
 
-  const filteredItems = CALCULATOR_ITEMS.filter((item) => item.category === selectedCategory);
+  const getServiceIcon = (iconName?: string) => {
+    switch (iconName) {
+      case 'Sparkles':
+        return <Sparkles size={20} color="#38b249" />;
+      case 'Flame':
+        return <Flame size={20} color="#d97706" />;
+      case 'Crown':
+        return <Crown size={20} color="#9333ea" />;
+      case 'Shirt':
+      default:
+        return <Shirt size={20} color="#0284c7" />;
+    }
+  };
+
+  const getIconBackground = (iconName?: string) => {
+    switch (iconName) {
+      case 'Sparkles':
+        return '#ebf8ee';
+      case 'Flame':
+        return '#fef3c7';
+      case 'Crown':
+        return '#f3e8ff';
+      case 'Shirt':
+      default:
+        return '#e0f2fe';
+    }
+  };
 
   // Compute total items and price
   const totalItems = Object.values(quantities).reduce((acc, qty) => acc + qty, 0);
   const totalPrice = Object.entries(quantities).reduce((acc, [id, qty]) => {
-    const item = CALCULATOR_ITEMS.find((it) => it.id === id);
-    return acc + (item ? item.price * qty : 0);
+    const s = services.find((item) => item.id === id);
+    return acc + (s ? s.price * qty : 0);
   }, 0);
 
   const freeDeliveryThreshold = 350;
@@ -89,12 +203,12 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
   const handleBook = () => {
     const selectedList = Object.entries(quantities)
       .map(([id, qty]) => {
-        const item = CALCULATOR_ITEMS.find((it) => it.id === id);
-        return `${item?.name} (${qty} ${item?.unit})`;
+        const s = services.find((item) => item.id === id);
+        return `${s?.title} (${qty}x)`;
       })
       .join(', ');
 
-    onBookWithItems(selectedList || 'Custom Wash & Dry Clean', totalPrice);
+    onBookWithItems(selectedList || 'Custom Laundry Booking', totalPrice);
   };
 
   return (
@@ -118,14 +232,14 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
             Calculate Your Laundry Cost
           </h2>
           <p className="section-description">
-            Transparent, zero-hidden-fee pricing. Add your garments below to calculate real-time rates and unlock 100% free doorstep pickup!
+            Transparent, zero-hidden-fee pricing for our 4 core services. Select your services below to calculate real-time rates and unlock 100% free doorstep pickup!
           </p>
         </div>
 
         {/* Calculator Main Grid */}
         <div className="calc-container" style={{
           display: 'grid',
-          gridTemplateColumns: '1.4fr 0.8fr',
+          gridTemplateColumns: '1.35fr 0.85fr',
           gap: '32px',
           backgroundColor: '#f8fbfe',
           borderRadius: '28px',
@@ -133,118 +247,198 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
           padding: '36px',
           boxShadow: '0 12px 36px rgba(19, 56, 87, 0.05)',
         }}>
-          {/* Left: Items Selection */}
+          {/* Left: 4 Services Selection */}
           <div style={{ minWidth: 0 }}>
-            {/* Category Filter Tabs */}
-            <div className="category-tabs-container" style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '10px',
-              marginBottom: '24px',
-            }}>
-              {[
-                { id: 'men', label: "Men's Wear" },
-                { id: 'women', label: "Women's Wear" },
-                { id: 'household', label: 'Home Linen' },
-                { id: 'specialty', label: 'Shoes & Leather' },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id as any)}
-                  style={{
-                    padding: '8px 18px',
-                    borderRadius: '9999px',
-                    fontSize: '13.5px',
-                    fontWeight: 600,
-                    transition: 'all 0.2s ease',
-                    backgroundColor: selectedCategory === cat.id ? '#133857' : '#ffffff',
-                    color: selectedCategory === cat.id ? '#ffffff' : '#536e82',
-                    border: selectedCategory === cat.id ? '1px solid #133857' : '1px solid #cbd5e1',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {cat.label}
-                </button>
-              ))}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#133857', marginBottom: '4px' }}>
+                  Choose Services &amp; Quantity
+                </h3>
+                <p style={{ fontSize: '13px', color: '#64748b' }}>
+                  Tap <span style={{ color: '#38b249', fontWeight: 700 }}>+</span> to add garments or packages to your cart
+                </p>
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: '#38b249', backgroundColor: '#ebf8ee', padding: '4px 10px', borderRadius: '8px' }}>
+                {services.length} Services Available
+              </span>
             </div>
 
-            {/* Items List */}
+            {/* 4 Services Grid */}
             <div style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: '14px',
-              maxHeight: '440px',
-              overflowY: 'auto',
-              padding: '4px 4px 24px 4px',
-              margin: '-4px -4px -24px -4px', /* Counteract padding to keep alignment while allowing shadow to show */
-            }} className="calc-items-grid">
-              {filteredItems.map((item) => {
-                const qty = quantities[item.id] || 0;
+              gap: '16px',
+            }} className="calc-services-grid">
+              {services.map((service) => {
+                const qty = quantities[service.id] || 0;
                 return (
                   <div
-                    key={item.id}
+                    key={service.id}
+                    className="calc-service-card"
                     style={{
-                      padding: '14px 16px',
-                      borderRadius: '16px',
+                      padding: '20px',
+                      borderRadius: '20px',
                       backgroundColor: qty > 0 ? '#f0fdf4' : '#ffffff',
-                      border: qty > 0 ? '1.5px solid #38b249' : '1px solid #e2e8f0',
+                      border: qty > 0 ? '2px solid #38b249' : '1.5px solid #e2e8f0',
+                      boxShadow: qty > 0 ? '0 10px 24px rgba(56, 178, 73, 0.12)' : '0 4px 16px rgba(19, 56, 87, 0.02)',
                       display: 'flex',
-                      alignItems: 'center',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
-                      transition: 'all 0.2s ease',
+                      transition: 'all 0.25s ease',
+                      position: 'relative',
                     }}
                   >
-                    <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
-                      <div style={{ fontSize: '14.5px', fontWeight: 700, color: '#133857', marginBottom: '2px', wordBreak: 'break-word', lineHeight: 1.2 }}>
-                        {item.name}
-                      </div>
-                      <div style={{ fontSize: '13px', color: '#38b249', fontWeight: 700, marginTop: '4px' }}>
-                        ₹{item.price} <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 500 }}>/{item.unit}</span>
-                      </div>
-                    </div>
-
-                    {/* Quantity controls */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
-                      {qty > 0 && (
-                        <>
-                          <button
-                            onClick={() => handleDecrement(item.id)}
-                            style={{
-                              width: '28px',
-                              height: '28px',
-                              borderRadius: '8px',
-                              backgroundColor: '#ffffff',
-                              border: '1px solid #cbd5e1',
-                              color: '#133857',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <span style={{ fontSize: '14px', fontWeight: 800, color: '#133857', minWidth: '18px', textAlign: 'center' }}>
-                            {qty}
-                          </span>
-                        </>
-                      )}
-
-                      <button
-                        onClick={() => handleIncrement(item.id)}
-                        style={{
-                          width: '28px',
-                          height: '28px',
-                          borderRadius: '8px',
-                          backgroundColor: qty > 0 ? '#38b249' : '#133857',
-                          color: '#ffffff',
+                    <div>
+                      {/* Top Header inside Card */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                        <div style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '12px',
+                          backgroundColor: getIconBackground(service.icon),
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          transition: 'all 0.2s ease',
-                        }}
-                      >
-                        <Plus size={14} />
-                      </button>
+                          flexShrink: 0,
+                        }}>
+                          {getServiceIcon(service.icon)}
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                          {service.popular && (
+                            <span style={{
+                              backgroundColor: '#fef3c7',
+                              color: '#b45309',
+                              fontSize: '10.5px',
+                              fontWeight: 800,
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.04em',
+                            }}>
+                              Popular
+                            </span>
+                          )}
+                          <span style={{
+                            backgroundColor: '#f1f5f9',
+                            color: '#475569',
+                            fontSize: '10.5px',
+                            fontWeight: 700,
+                            padding: '3px 8px',
+                            borderRadius: '6px',
+                            textTransform: 'uppercase',
+                          }}>
+                            {service.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Title & Description */}
+                      <h4 style={{
+                        fontSize: '16.5px',
+                        fontWeight: 800,
+                        color: '#133857',
+                        marginBottom: '6px',
+                        lineHeight: 1.25,
+                      }}>
+                        {service.title}
+                      </h4>
+                      <p style={{
+                        fontSize: '13px',
+                        color: '#64748b',
+                        lineHeight: 1.45,
+                        marginBottom: '16px',
+                        minHeight: '38px',
+                      }}>
+                        {service.description}
+                      </p>
+                    </div>
+
+                    {/* Bottom Pricing & Controls */}
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      paddingTop: '12px',
+                      borderTop: qty > 0 ? '1px solid #bbf7d0' : '1px solid #f1f5f9',
+                    }}>
+                      <div>
+                        <span style={{ fontSize: '11px', color: '#94a3b8', display: 'block', fontWeight: 600 }}>Rate</span>
+                        <span style={{ fontSize: '19px', fontWeight: 800, color: '#38b249' }}>
+                          ₹{service.price}
+                        </span>
+                      </div>
+
+                      {/* Quantity Controls */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {qty === 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => handleIncrement(service.id)}
+                            style={{
+                              padding: '8px 16px',
+                              borderRadius: '10px',
+                              backgroundColor: '#133857',
+                              color: '#ffffff',
+                              fontSize: '13px',
+                              fontWeight: 700,
+                              border: 'none',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              transition: 'all 0.2s ease',
+                            }}
+                          >
+                            <Plus size={14} />
+                            <span>Add</span>
+                          </button>
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleDecrement(service.id)}
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '10px',
+                                backgroundColor: '#ffffff',
+                                border: '1.5px solid #cbd5e1',
+                                color: '#133857',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              <Minus size={15} />
+                            </button>
+                            <span style={{ fontSize: '15px', fontWeight: 800, color: '#133857', minWidth: '20px', textAlign: 'center' }}>
+                              {qty}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => handleIncrement(service.id)}
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '10px',
+                                backgroundColor: '#38b249',
+                                border: 'none',
+                                color: '#ffffff',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              <Plus size={15} />
+                            </button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -255,7 +449,7 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
           {/* Right: Real-time Order Summary Card */}
           <div style={{
             backgroundColor: '#ffffff',
-            borderRadius: '20px',
+            borderRadius: '24px',
             padding: '28px',
             border: '1px solid #e2e8f0',
             display: 'flex',
@@ -278,6 +472,10 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 600,
                     }}
                   >
                     <RotateCcw size={12} />
@@ -315,11 +513,55 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
                 </div>
               </div>
 
+              {/* Selected Services Itemized List */}
+              {totalItems > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto', marginBottom: '18px' }}>
+                  {services.filter(s => (quantities[s.id] || 0) > 0).map(s => {
+                    const count = quantities[s.id] || 0;
+                    return (
+                      <div
+                        key={s.id}
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          fontSize: '13px',
+                          padding: '8px 12px',
+                          backgroundColor: '#f8fafc',
+                          borderRadius: '10px',
+                          border: '1px solid #f1f5f9',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <CheckCircle2 size={14} color="#38b249" />
+                          <span style={{ fontWeight: 700, color: '#133857' }}>{s.title}</span>
+                          <span style={{ color: '#64748b', fontSize: '12px' }}>×{count}</span>
+                        </div>
+                        <span style={{ fontWeight: 800, color: '#38b249' }}>₹{s.price * count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div style={{
+                  padding: '16px',
+                  textAlign: 'center',
+                  color: '#64748b',
+                  fontSize: '13px',
+                  backgroundColor: '#f8fafc',
+                  borderRadius: '12px',
+                  marginBottom: '18px',
+                  border: '1px dashed #cbd5e1',
+                }}>
+                  No service added yet. Click <strong>+ Add</strong> on any service to estimate cost.
+                </div>
+              )}
+
               {/* Breakdown */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#536e82' }}>
-                  <span>Total Items</span>
-                  <span style={{ fontWeight: 700, color: '#133857' }}>{totalItems} garments</span>
+                  <span>Total Selected</span>
+                  <span style={{ fontWeight: 700, color: '#133857' }}>{totalItems} services</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#536e82' }}>
                   <span>Doorstep Pickup</span>
@@ -328,7 +570,7 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px', color: '#536e82' }}>
-                  <span>Eco Packaging & Hangers</span>
+                  <span>Eco Packaging &amp; Tags</span>
                   <span style={{ fontWeight: 700, color: '#38b249' }}>Included</span>
                 </div>
               </div>
@@ -346,6 +588,7 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
             {/* Book Now Button */}
             <button
               onClick={handleBook}
+              disabled={totalItems === 0}
               className="btn-primary"
               style={{
                 width: '100%',
@@ -353,10 +596,12 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
                 fontSize: '15px',
                 fontWeight: 700,
                 borderRadius: '12px',
+                opacity: totalItems === 0 ? 0.6 : 1,
+                cursor: totalItems === 0 ? 'not-allowed' : 'pointer',
               }}
             >
               <Sparkles size={16} />
-              <span>Book Pickup With These Items</span>
+              <span>Book Pickup With These Services</span>
               <ArrowRight size={16} />
             </button>
           </div>
@@ -369,11 +614,8 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
             grid-template-columns: 1fr !important;
             padding: 24px !important;
           }
-          .calc-items-grid {
-            display: flex !important;
-            flex-direction: column !important;
-            max-height: none !important;
-            overflow-y: visible !important;
+          .calc-services-grid {
+            grid-template-columns: 1fr !important;
           }
         }
         @media (max-width: 600px) {
@@ -381,11 +623,6 @@ export default function PriceCalculator({ onBookWithItems }: PriceCalculatorProp
             padding: 18px 14px !important;
             border-radius: 20px !important;
           }
-        }
-        
-        /* Hide scrollbar for category tabs */
-        .category-tabs-container::-webkit-scrollbar {
-          display: none;
         }
       `}</style>
     </section>

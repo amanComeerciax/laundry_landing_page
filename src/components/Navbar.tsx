@@ -34,13 +34,12 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
   }, [mobileMenuOpen]);
 
   const navLinks = [
-    { name: 'Home', href: '#home' },
-    { name: 'About', href: '#about' },
-    { name: 'Services', href: '#services' },
-    { name: 'Calculator', href: '#calculator' },
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'Contact', href: '#contact' },
+    { name: 'Home', href: '/' },
+    { name: 'About', href: '/about' },
+    { name: 'Services', href: '/services' },
+    { name: 'Pricing', href: '/pricing' },
+    { name: 'How It Works', href: '/how-it-works' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   const closeMenu = () => setMobileMenuOpen(false);
@@ -290,7 +289,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
           </button>
 
           <a
-            href="tel:+919265588226"
+            href="tel:+916355090297"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -307,7 +306,7 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
             }}
           >
             <Phone size={15} color="#38b249" />
-            <span>+91 92655 88226</span>
+            <span>+91 63550 90297</span>
           </a>
         </div>
       </div>
