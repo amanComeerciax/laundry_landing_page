@@ -14,6 +14,13 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
     
     const data = await req.json();
+
+    // Validate that pickupDate is not in the past
+    const d = new Date();
+    const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (data.pickupDate && data.pickupDate < todayStr) {
+      return NextResponse.json({ error: 'Pickup date cannot be in the past' }, { status: 400 });
+    }
     
     // Generate a simple Order ID
     const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -90,6 +97,12 @@ export async function PATCH(req: NextRequest) {
 
     if (!orderId || !pickupDate || !pickupTime) {
       return NextResponse.json({ error: 'orderId, pickupDate and pickupTime are required' }, { status: 400 });
+    }
+
+    const d = new Date();
+    const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    if (pickupDate < todayStr) {
+      return NextResponse.json({ error: 'Rescheduled date cannot be in the past' }, { status: 400 });
     }
 
     const updatedOrder = await Order.findOneAndUpdate(

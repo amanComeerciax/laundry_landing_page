@@ -74,6 +74,28 @@ export default function UserDashboardPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online');
+  const getTodayDateString = () => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const getUpcomingDays = () => {
+    const days = [];
+    const now = new Date();
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const dayName = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { weekday: 'short' });
+      const formatted = d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+      days.push({ dateStr, dayName, formatted });
+    }
+    return days;
+  };
+
   const [formData, setFormData] = useState({
     serviceId: '',
     serviceName: '',
@@ -226,6 +248,14 @@ export default function UserDashboardPage() {
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const today = getTodayDateString();
+    if (!formData.pickupDate || formData.pickupDate < today) {
+      toast.error('Past dates cannot be booked. Please select today or a future date.');
+      setStep(2);
+      return;
+    }
+
     setIsSubmitting(true);
 
     const baseOrderPayload = {
@@ -353,6 +383,14 @@ export default function UserDashboardPage() {
   const handleReschedule = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!rescheduleOrder || !rescheduleDate || !rescheduleTime) return;
+
+    const today = getTodayDateString();
+    if (rescheduleDate < today) {
+      toast.error('Past dates cannot be selected for rescheduling.');
+      setRescheduleDate(today);
+      return;
+    }
+
     setIsRescheduling(true);
     try {
       const res = await fetch('/api/orders', {
@@ -1099,8 +1137,75 @@ export default function UserDashboardPage() {
                     </button>
                     <h2 style={{ fontSize: '22px', fontWeight: 700, color: '#133857', marginBottom: '24px' }}>When should we arrive?</h2>
                     <div style={{ marginBottom: '24px' }}>
-                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>Select Date</label>
-                      <input type="date" min={new Date().toISOString().split('T')[0]} value={formData.pickupDate} onChange={e => setFormData({...formData, pickupDate: e.target.value})} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', fontSize: '16px' }} />
+                      <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14px', fontWeight: 700, color: '#133857', marginBottom: '10px' }}>
+                        <span>Select Date</span>
+                        <span style={{ fontSize: '12px', color: '#16a34a', fontWeight: 600 }}>Future Dates Only</span>
+                      </label>
+
+                      {/* Quick Day Chips (Mobile Friendly - 1 Touch Selection) */}
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '8px', marginBottom: '14px' }}>
+                        {getUpcomingDays().map((day) => {
+                          const isSelected = formData.pickupDate === day.dateStr;
+                          return (
+                            <button
+                              type="button"
+                              key={day.dateStr}
+                              onClick={() => setFormData({ ...formData, pickupDate: day.dateStr })}
+                              style={{
+                                padding: '10px 8px',
+                                borderRadius: '12px',
+                                border: `2px solid ${isSelected ? '#38b249' : '#e2e8f0'}`,
+                                backgroundColor: isSelected ? 'rgba(56, 178, 73, 0.08)' : '#ffffff',
+                                color: isSelected ? '#15803d' : '#133857',
+                                cursor: 'pointer',
+                                textAlign: 'center',
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              <div style={{ fontSize: '13px', fontWeight: 800 }}>{day.dayName}</div>
+                              <div style={{ fontSize: '11px', color: isSelected ? '#15803d' : '#64748b', fontWeight: 600, marginTop: '2px' }}>{day.formatted}</div>
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Native Date Input with Strict Min & Intercept */}
+                      <div>
+                        <input 
+                          type="date" 
+                          min={getTodayDateString()} 
+                          value={formData.pickupDate} 
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (!val) {
+                              setFormData({ ...formData, pickupDate: '' });
+                              return;
+                            }
+                            const today = getTodayDateString();
+                            if (val < today) {
+                              toast.error('Past dates cannot be selected. Please pick today or a future date.');
+                              setFormData({ ...formData, pickupDate: today });
+                              return;
+                            }
+                            setFormData({ ...formData, pickupDate: val });
+                          }} 
+                          style={{ 
+                            width: '100%', 
+                            padding: '14px', 
+                            borderRadius: '12px', 
+                            border: `1.5px solid ${formData.pickupDate && formData.pickupDate < getTodayDateString() ? '#ef4444' : '#e2e8f0'}`, 
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            color: '#133857',
+                            backgroundColor: '#ffffff'
+                          }} 
+                        />
+                      </div>
+                      {formData.pickupDate && formData.pickupDate < getTodayDateString() && (
+                        <p style={{ color: '#ef4444', fontSize: '12px', fontWeight: 700, marginTop: '6px' }}>
+                          ⚠️ Past dates cannot be booked. Please choose today or a later date.
+                        </p>
+                      )}
                     </div>
                     <div style={{ marginBottom: '32px' }}>
                       <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>Select Time Slot</label>
@@ -1120,7 +1225,19 @@ export default function UserDashboardPage() {
                       >
                         <ArrowLeft size={18} /> Previous Step
                       </button>
-                      <button onClick={() => setStep(3)} disabled={!formData.pickupDate || !formData.pickupTime} className="btn-primary" style={{ flex: 1, padding: '16px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, opacity: (!formData.pickupDate || !formData.pickupTime) ? 0.5 : 1 }}>
+                      <button 
+                        onClick={() => {
+                          const today = getTodayDateString();
+                          if (formData.pickupDate < today) {
+                            toast.error('Past dates cannot be selected.');
+                            return;
+                          }
+                          setStep(3);
+                        }} 
+                        disabled={!formData.pickupDate || formData.pickupDate < getTodayDateString() || !formData.pickupTime} 
+                        className="btn-primary" 
+                        style={{ flex: 1, padding: '16px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, opacity: (!formData.pickupDate || formData.pickupDate < getTodayDateString() || !formData.pickupTime) ? 0.5 : 1 }}
+                      >
                         Continue to Address →
                       </button>
                     </div>
@@ -1561,9 +1678,18 @@ export default function UserDashboardPage() {
                 <input 
                   type="date" 
                   required 
-                  min={new Date().toISOString().split('T')[0]} 
+                  min={getTodayDateString()} 
                   value={rescheduleDate} 
-                  onChange={e => setRescheduleDate(e.target.value)} 
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const today = getTodayDateString();
+                    if (val < today) {
+                      toast.error('Past dates cannot be selected for rescheduling.');
+                      setRescheduleDate(today);
+                      return;
+                    }
+                    setRescheduleDate(val);
+                  }} 
                   style={{ width: '100%', padding: '12px 14px', borderRadius: '12px', border: '1.5px solid #cbd5e1', fontSize: '15px' }} 
                 />
               </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, MapPin, Phone, User, CheckCircle2, Sparkles, Truck, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import toast from 'react-hot-toast';
 
 interface PickupModalProps {
   isOpen: boolean;
@@ -213,8 +214,22 @@ export default function PickupModal({
                   <input
                     type="date"
                     required
+                    min={(() => {
+                      const d = new Date();
+                      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                    })()}
                     value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      const d = new Date();
+                      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+                      if (val && val < today) {
+                        toast.error('Past dates cannot be selected. Please pick today or a future date.');
+                        setDate(today);
+                        return;
+                      }
+                      setDate(val);
+                    }}
                     style={{
                       width: '100%',
                       padding: '11px 12px',
