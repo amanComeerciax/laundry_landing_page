@@ -1,24 +1,9 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import Preloader from "@/components/Preloader";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from 'react-hot-toast';
-
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  variable: "--font-jakarta",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Glamour Dry | Professional Dry Cleaning & Eco-Friendly Laundry",
@@ -49,7 +34,12 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${outfit.variable} ${plusJakartaSans.variable}`}>
+      <html lang="en">
+        <head>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+          <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        </head>
         <body className="antialiased">
           <Preloader />
           <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
