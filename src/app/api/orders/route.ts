@@ -66,22 +66,25 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ event: 'order_created', payload: newOrder })
     }).catch(err => console.error('Webhook error:', err));
 
-    // Send both Admin notification & Customer confirmation emails via Resend
-    sendAllBookingEmails({
-      orderId,
-      customerName: customerName || data.customerName,
-      customerPhone: data.phone,
-      customerEmail: customerEmail,
-      service: data.service,
-      totalAmount: data.totalAmount,
-      pickupDate: data.pickupDate,
-      pickupTime: data.pickupTime,
-      address: data.address,
-      notes: data.notes,
-      paymentMethod: data.paymentMethod || 'cod'
-    }).then(results => {
-      console.log('[Orders API] Booking email dispatch result:', results);
-    }).catch(err => console.error('[Orders API] Booking email error:', err));
+    // Await email dispatch so Vercel serverless function does not freeze before delivery
+    try {
+      const emailResults = await sendAllBookingEmails({
+        orderId,
+        customerName: customerName || data.customerName,
+        customerPhone: data.phone,
+        customerEmail: customerEmail,
+        service: data.service,
+        totalAmount: data.totalAmount,
+        pickupDate: data.pickupDate,
+        pickupTime: data.pickupTime,
+        address: data.address,
+        notes: data.notes,
+        paymentMethod: data.paymentMethod || 'cod'
+      });
+      console.log('[Orders API] Booking email dispatch result:', emailResults);
+    } catch (emailErr) {
+      console.error('[Orders API] Booking email error:', emailErr);
+    }
 
     return NextResponse.json({ success: true, order: newOrder }, { status: 201 });
   } catch (error: any) {
