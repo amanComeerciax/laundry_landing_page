@@ -40,7 +40,34 @@ async function sendEmail({
   replyTo?: string;
   headers?: Record<string, string>;
 }) {
-  // 1. Try Gmail SMTP (delivers to all customer emails without domain restriction)
+  const isAdminRecipient = to.trim().toLowerCase() === adminEmail.trim().toLowerCase();
+
+  // 1. If sending to Admin (memonljku@gmail.com), prioritize Resend:
+  // When sending from Gmail SMTP to itself (memonljku -> memonljku), Gmail suppresses inbox notification and classifies it as Sent/Self.
+  // Resend sends from an external sender (onboarding@resend.dev) so Admin gets a real Inbox notification every time!
+  if (isAdminRecipient && resendApiKey) {
+    try {
+      const response = await resend.emails.send({
+        from: fromEmail,
+        to,
+        replyTo: replyTo || undefined,
+        subject,
+        text: text || undefined,
+        html,
+        headers,
+      });
+
+      if (!response.error) {
+        console.log(`[Email Service] Sent to Admin via Resend to ${to} (ID: ${response.data?.id})`);
+        return { success: true, data: response.data };
+      }
+      console.warn(`[Email Service] Resend admin send warning, falling back to SMTP:`, response.error);
+    } catch (resendError: any) {
+      console.warn(`[Email Service] Resend admin send exception, falling back to SMTP:`, resendError?.message);
+    }
+  }
+
+  // 2. Try Gmail SMTP (delivers to all customer emails without domain restrictions)
   if (transporter && smtpUser) {
     try {
       const info = await transporter.sendMail({
@@ -62,7 +89,7 @@ async function sendEmail({
     }
   }
 
-  // 2. Fallback to Resend
+  // 3. Fallback to Resend (for customer emails, if SMTP is unavailable)
   if (resendApiKey) {
     try {
       const response = await resend.emails.send({
