@@ -1,10 +1,81 @@
 import { Resend } from 'resend';
+import nodemailer from 'nodemailer';
 
 const resendApiKey = process.env.RESEND_API_KEY || '';
 const adminEmail = process.env.ADMIN_EMAIL || 'memonljku@gmail.com';
 const fromEmail = process.env.RESEND_FROM_EMAIL || 'Glamour Dry <onboarding@resend.dev>';
+const smtpUser = process.env.SMTP_USER;
+const smtpPass = process.env.SMTP_PASS;
 
 export const resend = new Resend(resendApiKey);
+
+// Setup Gmail / Custom SMTP Transporter
+const transporter = (smtpUser && smtpPass)
+  ? nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+    })
+  : null;
+
+/**
+ * Universal email dispatcher (tries Gmail SMTP first, falls back to Resend)
+ */
+async function sendEmail({
+  to,
+  subject,
+  html,
+  replyTo,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) {
+  // 1. Try Gmail SMTP (delivers to all customer emails without domain restriction)
+  if (transporter && smtpUser) {
+    try {
+      const info = await transporter.sendMail({
+        from: `"Glamour Dry" <${smtpUser}>`,
+        to,
+        subject,
+        html,
+        replyTo: replyTo || smtpUser,
+      });
+      console.log(`[Email Service] Sent via Gmail SMTP to ${to} (ID: ${info.messageId})`);
+      return { success: true, data: info };
+    } catch (smtpError: any) {
+      console.warn(`[Email Service] SMTP send failed for ${to}, falling back to Resend:`, smtpError?.message);
+    }
+  }
+
+  // 2. Fallback to Resend
+  if (resendApiKey) {
+    try {
+      const response = await resend.emails.send({
+        from: fromEmail,
+        to,
+        replyTo: replyTo || undefined,
+        subject,
+        html,
+      });
+
+      if (response.error) {
+        console.warn(`[Email Service] Resend send notice for ${to}:`, response.error);
+        return { success: false, error: response.error };
+      }
+      console.log(`[Email Service] Sent via Resend to ${to} (ID: ${response.data?.id})`);
+      return { success: true, data: response.data };
+    } catch (resendError: any) {
+      console.error(`[Email Service] Resend exception for ${to}:`, resendError);
+      return { success: false, error: resendError?.message || 'Failed to send email' };
+    }
+  }
+
+  return { success: false, error: 'No email service configured (SMTP or Resend)' };
+}
 
 export interface InquiryData {
   name: string;
@@ -108,18 +179,16 @@ export async function sendInquiryEmail(data: InquiryData) {
       </html>
     `;
 
-    const response = await resend.emails.send({
-      from: fromEmail,
+    const result = await sendEmail({
       to: adminEmail,
       replyTo: data.email || undefined,
       subject: `New Inquiry from ${data.name} - Glamour Dry`,
       html,
     });
 
-    console.log('[Resend] Inquiry email sent successfully:', response);
-    return { success: true, data: response };
+    return result;
   } catch (error: any) {
-    console.error('[Resend] Failed to send inquiry email:', error);
+    console.error('[Email Service] Failed to send inquiry email:', error);
     return { success: false, error: error?.message || 'Failed to send email' };
   }
 }
@@ -219,23 +288,16 @@ export async function sendBookingNotificationEmail(data: BookingEmailData) {
       </html>
     `;
 
-    const response = await resend.emails.send({
-      from: fromEmail,
+    const result = await sendEmail({
       to: adminEmail,
       replyTo: data.customerEmail || undefined,
       subject: `New Booking #${cleanOrderId}: ${data.service} (₹${data.totalAmount})`,
       html,
     });
 
-    if (response.error) {
-      console.error('[Resend] Admin booking notification error:', response.error);
-      return { success: false, error: response.error };
-    }
-
-    console.log('[Resend] Admin booking email sent successfully:', response.data);
-    return { success: true, data: response.data };
+    return result;
   } catch (error: any) {
-    console.error('[Resend] Failed to send admin booking email:', error);
+    console.error('[Email Service] Failed to send admin booking email:', error);
     return { success: false, error: error?.message || 'Failed to send email' };
   }
 }
@@ -391,23 +453,16 @@ export async function sendCustomerBookingConfirmationEmail(data: BookingEmailDat
       </html>
     `;
 
-    const response = await resend.emails.send({
-      from: fromEmail,
+    const result = await sendEmail({
       to: data.customerEmail,
       replyTo: adminEmail,
       subject: `🎉 Booking Confirmed! Your Laundry Pickup is Scheduled (#${cleanOrderId}) - Glamour Dry`,
       html,
     });
 
-    if (response.error) {
-      console.warn(`[Resend] Customer confirmation email notice (${data.customerEmail}):`, response.error);
-      return { success: false, error: response.error };
-    }
-
-    console.log(`[Resend] Customer confirmation email sent successfully to ${data.customerEmail}:`, response.data);
-    return { success: true, data: response.data };
+    return result;
   } catch (error: any) {
-    console.error('[Resend] Failed to send customer booking email:', error);
+    console.error('[Email Service] Failed to send customer booking email:', error);
     return { success: false, error: error?.message || 'Failed to send customer email' };
   }
 }
