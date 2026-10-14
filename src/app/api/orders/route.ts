@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/lib/mongodb';
 import { Order } from '@/models/Order';
-import { getAuth } from '@clerk/nextjs/server';
-import { sendBookingNotificationEmail } from '@/lib/email';
+import { getAuth, clerkClient } from '@clerk/nextjs/server';
+import { sendAllBookingEmails } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,6 +21,26 @@ export async function POST(req: NextRequest) {
     if (data.pickupDate && data.pickupDate < todayStr) {
       return NextResponse.json({ error: 'Pickup date cannot be in the past' }, { status: 400 });
     }
+
+    // Resolve customer email and name (from payload, or directly from Clerk user if missing)
+    let customerEmail = data.customerEmail || data.email;
+    let customerName = data.customerName;
+
+    if (!customerEmail || customerEmail === 'No email') {
+      try {
+        const client = typeof clerkClient === 'function' ? await (clerkClient as any)() : clerkClient;
+        const clerkUser = await client.users.getUser(userId);
+        if (clerkUser) {
+          customerEmail = clerkUser.emailAddresses?.find((e: any) => e.id === clerkUser.primaryEmailAddressId)?.emailAddress 
+            || clerkUser.emailAddresses?.[0]?.emailAddress;
+          if (!customerName || customerName === 'Customer') {
+            customerName = clerkUser.firstName ? `${clerkUser.firstName} ${clerkUser.lastName || ''}`.trim() : 'Customer';
+          }
+        }
+      } catch (err) {
+        console.error('[Orders API] Clerk user lookup error:', err);
+      }
+    }
     
     // Generate a simple Order ID
     const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -30,6 +50,8 @@ export async function POST(req: NextRequest) {
       ...data,
       userId,
       orderId,
+      customerName: customerName || data.customerName || 'Customer',
+      customerEmail: customerEmail || data.customerEmail || 'No email',
       status: 'pickup',
       paymentMethod: data.paymentMethod || 'cod',
       paymentStatus: data.paymentStatus || (data.paymentMethod === 'online' ? 'paid' : 'pending'),
@@ -44,12 +66,12 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({ event: 'order_created', payload: newOrder })
     }).catch(err => console.error('Webhook error:', err));
 
-    // Send email notification via Resend
-    sendBookingNotificationEmail({
+    // Send both Admin notification & Customer confirmation emails via Resend
+    sendAllBookingEmails({
       orderId,
-      customerName: data.customerName,
+      customerName: customerName || data.customerName,
       customerPhone: data.phone,
-      customerEmail: data.email,
+      customerEmail: customerEmail,
       service: data.service,
       totalAmount: data.totalAmount,
       pickupDate: data.pickupDate,
@@ -57,7 +79,9 @@ export async function POST(req: NextRequest) {
       address: data.address,
       notes: data.notes,
       paymentMethod: data.paymentMethod || 'cod'
-    }).catch(err => console.error('[Resend] Booking email error:', err));
+    }).then(results => {
+      console.log('[Orders API] Booking email dispatch result:', results);
+    }).catch(err => console.error('[Orders API] Booking email error:', err));
 
     return NextResponse.json({ success: true, order: newOrder }, { status: 201 });
   } catch (error: any) {
