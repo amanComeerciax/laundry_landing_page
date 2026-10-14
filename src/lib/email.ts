@@ -390,220 +390,100 @@ export async function sendCustomerBookingConfirmationEmail(data: BookingEmailDat
       <html lang="en">
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Booking Confirmed: Order #${cleanOrderId}</title>
       </head>
-      <body style="margin: 0; padding: 20px 0; background-color: #f4f7fb; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
-        <center>
-          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(19, 56, 87, 0.06);">
-            <!-- Header -->
-            <tr>
-              <td align="center" style="background-color: #133857; padding: 32px 24px;">
-                <h1 style="margin: 0; font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
-                  <span style="color: #38b249;">Glamour</span>Dry
-                </h1>
-                <p style="margin: 6px 0 0; color: #94a3b8; font-size: 14px; font-weight: 500;">
-                  Eco-Friendly Garment Care &amp; Doorstep Laundry
-                </p>
-              </td>
-            </tr>
+      <body style="margin: 0; padding: 24px 16px; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #1e293b;">
+        <div style="max-width: 560px; margin: 0 auto;">
+          
+          <!-- Brand Header -->
+          <div style="font-size: 22px; font-weight: 800; color: #133857; margin-bottom: 20px;">
+            <span style="color: #38b249;">Glamour</span>Dry
+          </div>
 
-            <!-- Status Banner -->
-            <tr>
-              <td align="center" style="background-color: #f0fdf4; border-bottom: 2px solid #bbf7d0; padding: 16px 20px;">
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                  <tr>
-                    <td align="center" style="background-color: #22c55e; color: #ffffff; padding: 5px 14px; border-radius: 99px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
-                      &#10003; Booking Confirmed
-                    </td>
-                  </tr>
-                </table>
-                <div style="font-size: 17px; font-weight: 800; color: #166534; margin-top: 8px;">
-                  Order #${cleanOrderId} is Scheduled!
-                </div>
-              </td>
-            </tr>
+          <!-- Greeting -->
+          <p style="margin: 0 0 16px; font-size: 16px; font-weight: 600; color: #0f172a;">
+            Hi ${data.customerName || 'there'},
+          </p>
 
-            <!-- Body Content -->
-            <tr>
-              <td style="padding: 28px 24px;">
-                <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">
-                  Hello ${data.customerName || 'Valued Customer'},
-                </div>
-                <p style="font-size: 14.5px; color: #64748b; line-height: 1.6; margin: 0 0 20px;">
-                  Great news! Your laundry pickup has been successfully booked with <strong>Glamour Dry</strong>. Our team is ready to pick up, clean, and deliver your clothes fresh and crisp.
-                </p>
+          <!-- Confirmation Statement -->
+          <p style="margin: 0 0 18px; color: #334155;">
+            Your laundry pickup has been successfully booked with <strong>Glamour Dry</strong>.
+          </p>
 
-                <!-- Order Summary Card -->
-                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px;">
-                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #133857; letter-spacing: 0.8px; margin-bottom: 12px;">
-                    &#128230; Order Summary
-                  </div>
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Order ID</td>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #0f172a; font-size: 14px; font-weight: 700;">#${cleanOrderId}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Service</td>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #0f172a; font-size: 14px; font-weight: 700;">${data.service}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Total Amount</td>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #166534; font-size: 18px; font-weight: 900;">&#8377;${data.totalAmount}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; color: #64748b; font-size: 14px; font-weight: 500;">Payment Mode</td>
-                      <td style="padding: 8px 0; text-align: right;">
-                        <span style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; ${isOnline ? 'background-color: #dcfce7; color: #15803d;' : 'background-color: #fef3c7; color: #b45309;'}">
-                          ${isOnline ? 'Online Paid (Razorpay)' : 'Cash on Delivery'}
-                        </span>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
+          <!-- Booking Details Card -->
+          <div style="background-color: #f8fafc; border-left: 4px solid #38b249; padding: 16px 20px; margin: 20px 0; border-radius: 6px; font-size: 14.5px; line-height: 1.7; color: #1e293b;">
+            <div style="margin-bottom: 8px;"><strong>Order ID:</strong> #${cleanOrderId}</div>
+            <div style="margin-bottom: 8px;"><strong>Service:</strong> ${data.service}</div>
+            <div style="margin-bottom: 8px;"><strong>Pickup Date &amp; Time:</strong> ${data.pickupDate} (${data.pickupTime})</div>
+            <div style="margin-bottom: 8px;"><strong>Total Amount:</strong> &#8377;${data.totalAmount} (${isOnline ? 'Online Paid via Razorpay' : 'Cash on Delivery'})</div>
+            <div><strong>Pickup Address:</strong> ${data.address}</div>
+            ${data.notes ? `<div style="margin-top: 8px;"><strong>Special Instructions:</strong> ${data.notes}</div>` : ''}
+          </div>
 
-                <!-- Pickup Schedule Card -->
-                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px;">
-                  <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: #133857; letter-spacing: 0.8px; margin-bottom: 12px;">
-                    &#128197; Pickup Schedule &amp; Location
-                  </div>
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Pickup Date</td>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #0f172a; font-size: 14px; font-weight: 700;">${data.pickupDate}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Time Window</td>
-                      <td style="padding: 8px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #0f172a; font-size: 14px; font-weight: 700;">${data.pickupTime}</td>
-                    </tr>
-                    <tr>
-                      <td valign="top" style="padding: 8px 0; color: #64748b; font-size: 14px; font-weight: 500;">Pickup Address</td>
-                      <td style="padding: 8px 0; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600; line-height: 1.4; max-width: 260px;">${data.address}</td>
-                    </tr>
-                    ${data.notes ? `
-                    <tr>
-                      <td style="padding: 8px 0; border-top: 1px solid #f1f5f9; color: #64748b; font-size: 14px; font-weight: 500;">Instructions</td>
-                      <td style="padding: 8px 0; border-top: 1px solid #f1f5f9; text-align: right; color: #0f172a; font-size: 14px; font-weight: 600;">${data.notes}</td>
-                    </tr>` : ''}
-                  </table>
-                </div>
+          <!-- Next Steps -->
+          <p style="margin: 20px 0 8px; font-weight: 700; color: #0f172a; font-size: 15px;">
+            What happens next?
+          </p>
+          <div style="margin: 0 0 18px; color: #475569; line-height: 1.7;">
+            1. Our delivery partner will arrive at your address within your selected time window.<br>
+            2. Your clothes will be inspected, cleaned using eco-friendly organic detergents, and steam pressed.<br>
+            3. Clean, crisp garments will be neatly packed and delivered right to your doorstep.
+          </div>
 
-                <!-- Step Items (TABLE BASED - NO OVERLAPPING NUMBERS) -->
-                <div style="background-color: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 14px; padding: 18px 20px; margin: 22px 0;">
-                  <div style="font-weight: 800; color: #133857; font-size: 13px; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
-                    &#10024; What Happens Next?
-                  </div>
-                  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
-                    <tr>
-                      <td valign="top" style="width: 34px; padding-bottom: 14px; padding-right: 12px; vertical-align: top;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
-                            <td align="center" style="width: 26px; height: 26px; background-color: #38b249; color: #ffffff; font-weight: 800; font-size: 13px; border-radius: 50%; text-align: center; line-height: 26px;">
-                              1
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td valign="top" style="padding-bottom: 14px; font-size: 13.5px; line-height: 1.5; color: #334155; vertical-align: top;">
-                        <strong style="color: #0f172a;">Doorstep Pickup:</strong> Our delivery partner arrives at your address within your selected time slot.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td valign="top" style="width: 34px; padding-bottom: 14px; padding-right: 12px; vertical-align: top;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
-                            <td align="center" style="width: 26px; height: 26px; background-color: #38b249; color: #ffffff; font-weight: 800; font-size: 13px; border-radius: 50%; text-align: center; line-height: 26px;">
-                              2
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td valign="top" style="padding-bottom: 14px; font-size: 13.5px; line-height: 1.5; color: #334155; vertical-align: top;">
-                        <strong style="color: #0f172a;">Eco-Friendly Cleaning:</strong> Clothes are inspected, washed with organic detergents, and steam pressed.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td valign="top" style="width: 34px; padding-right: 12px; vertical-align: top;">
-                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
-                          <tr>
-                            <td align="center" style="width: 26px; height: 26px; background-color: #38b249; color: #ffffff; font-weight: 800; font-size: 13px; border-radius: 50%; text-align: center; line-height: 26px;">
-                              3
-                            </td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td valign="top" style="font-size: 13.5px; line-height: 1.5; color: #334155; vertical-align: top;">
-                        <strong style="color: #0f172a;">Fast Delivery:</strong> Delivered neatly folded and packed right back to your doorstep!
-                      </td>
-                    </tr>
-                  </table>
-                </div>
+          <!-- Tracking -->
+          <p style="margin: 18px 0; color: #334155;">
+            You can track the live status of your order anytime on your dashboard:<br>
+            <a href="${siteUrl}/dashboard" style="color: #133857; font-weight: 700; text-decoration: underline;">
+              ${siteUrl}/dashboard
+            </a>
+          </p>
 
-                <!-- CTA Button -->
-                <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 22px 0 16px;">
-                  <tr>
-                    <td align="center" bgcolor="#38b249" style="border-radius: 12px; padding: 15px 24px; text-align: center;">
-                      <a href="${siteUrl}/dashboard" style="color: #ffffff; font-weight: 800; font-size: 15px; text-decoration: none; display: block;">
-                        Track Your Order on Dashboard &rarr;
-                      </a>
-                    </td>
-                  </tr>
-                </table>
+          <!-- Support -->
+          <p style="margin: 20px 0; color: #475569; font-size: 14px; line-height: 1.6;">
+            Have questions or need to reschedule your pickup? Feel free to reply directly to this email or reach us at:<br>
+            &#128222; Call/WhatsApp: <a href="tel:+916355090297" style="color: #133857; font-weight: 700; text-decoration: none;">+91 63550 90297</a> &nbsp;|&nbsp; &#9993; Email: <a href="mailto:${adminEmail}" style="color: #133857; font-weight: 700; text-decoration: none;">${adminEmail}</a>
+          </p>
 
-                <!-- Support Box -->
-                <div style="margin-top: 20px; padding: 16px; background-color: #f1f5f9; border-radius: 12px; text-align: center; font-size: 13px; color: #475569; line-height: 1.6;">
-                  Need to reschedule or have questions?<br>
-                  Call/WhatsApp: <a href="tel:+916355090297" style="color: #133857; font-weight: 700; text-decoration: none;">+91 63550 90297</a> &nbsp;&bull;&nbsp; Email: <a href="mailto:${adminEmail}" style="color: #133857; font-weight: 700; text-decoration: none;">${adminEmail}</a>
-                </div>
-              </td>
-            </tr>
+          <!-- Sign-off -->
+          <div style="margin-top: 28px; padding-top: 18px; border-top: 1px solid #e2e8f0; color: #334155; font-size: 14px; line-height: 1.6;">
+            Warm regards,<br>
+            <strong>Team Glamour Dry</strong><br>
+            <span style="font-size: 12.5px; color: #94a3b8;">Eco-Friendly Garment Care &bull; Ahmedabad, Gujarat</span>
+          </div>
 
-            <!-- Footer -->
-            <tr>
-              <td align="center" style="background-color: #f8fafc; padding: 22px 24px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0; line-height: 1.6;">
-                Glamour Dry &bull; Eco-Friendly Garment Care<br>
-                Clean More. Pay Less. &bull; Ahmedabad, Gujarat<br>
-                <span style="font-size: 11px; color: #cbd5e1;">Sent automatically for Order #${cleanOrderId}</span>
-              </td>
-            </tr>
-          </table>
-        </center>
+        </div>
       </body>
       </html>
     `;
 
     const text = `
-Booking Confirmed - Glamour Dry
-Order ID: #${cleanOrderId}
+Hi ${data.customerName || 'there'},
 
-Hello ${data.customerName || 'Valued Customer'},
+Your laundry pickup has been successfully booked with Glamour Dry.
 
-Thank you for booking with Glamour Dry! Your laundry pickup has been scheduled successfully.
-
-ORDER SUMMARY:
+BOOKING DETAILS:
 - Order ID: #${cleanOrderId}
 - Service: ${data.service}
-- Total Amount: Rs. ${data.totalAmount} (${isOnline ? 'Online Paid' : 'Cash on Delivery'})
-- Pickup Date: ${data.pickupDate}
-- Pickup Time Window: ${data.pickupTime}
+- Pickup Date & Time: ${data.pickupDate} (${data.pickupTime})
+- Total Amount: Rs. ${data.totalAmount} (${isOnline ? 'Online Paid via Razorpay' : 'Cash on Delivery'})
 - Pickup Address: ${data.address}
 ${data.notes ? `- Special Instructions: ${data.notes}\n` : ''}
 
-WHAT'S NEXT:
-1. Pickup: Our delivery partner will arrive at your address within your selected time slot.
-2. Eco-Friendly Cleaning: Clothes are inspected and washed with premium organic detergents.
-3. Fast Delivery: Delivered neatly folded and packed right back to your doorstep!
+WHAT HAPPENS NEXT:
+1. Our delivery partner will arrive at your address within your selected time window.
+2. Your clothes will be inspected, cleaned using eco-friendly organic detergents, and steam pressed.
+3. Clean, crisp garments will be neatly packed and delivered right to your doorstep.
 
-Track your order anytime on your dashboard:
+Track your order live:
 ${siteUrl}/dashboard
 
-Need assistance or wish to reschedule?
-Phone / WhatsApp: +91 63550 90297
+Have questions or need to reschedule?
+Call/WhatsApp: +91 63550 90297
 Email: ${adminEmail}
 
-Glamour Dry • Eco-Friendly Garment Care • Ahmedabad, Gujarat
-Sent for Order #${cleanOrderId}
+Warm regards,
+Team Glamour Dry
+Eco-Friendly Garment Care • Ahmedabad, Gujarat
     `.trim();
 
     const result = await sendEmail({
