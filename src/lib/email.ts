@@ -14,8 +14,8 @@ const transporter = (smtpUser && smtpPass)
   ? nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: smtpUser,
-        pass: smtpPass,
+        user: smtpUser.trim(),
+        pass: smtpPass.replace(/\s+/g, ''),
       },
     })
   : null;
