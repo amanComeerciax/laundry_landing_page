@@ -7,6 +7,8 @@ const fromEmail = process.env.RESEND_FROM_EMAIL || 'Glamour Dry <onboarding@rese
 const smtpUser = process.env.SMTP_USER;
 const smtpPass = process.env.SMTP_PASS;
 
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://laundry-landing-page-kappa.vercel.app';
+
 export const resend = new Resend(resendApiKey);
 
 // Setup Gmail / Custom SMTP Transporter
@@ -27,12 +29,16 @@ async function sendEmail({
   to,
   subject,
   html,
+  text,
   replyTo,
+  headers,
 }: {
   to: string;
   subject: string;
   html: string;
+  text?: string;
   replyTo?: string;
+  headers?: Record<string, string>;
 }) {
   // 1. Try Gmail SMTP (delivers to all customer emails without domain restriction)
   if (transporter && smtpUser) {
@@ -41,8 +47,13 @@ async function sendEmail({
         from: `"Glamour Dry" <${smtpUser}>`,
         to,
         subject,
+        text: text || '',
         html,
         replyTo: replyTo || smtpUser,
+        headers: {
+          'X-Entity-Ref-ID': Date.now().toString(),
+          ...headers,
+        },
       });
       console.log(`[Email Service] Sent via Gmail SMTP to ${to} (ID: ${info.messageId})`);
       return { success: true, data: info };
@@ -59,7 +70,9 @@ async function sendEmail({
         to,
         replyTo: replyTo || undefined,
         subject,
+        text: text || undefined,
         html,
+        headers,
       });
 
       if (response.error) {
@@ -179,10 +192,22 @@ export async function sendInquiryEmail(data: InquiryData) {
       </html>
     `;
 
+    const text = `
+New Inquiry Received - Glamour Dry
+Date: ${formattedDate}
+
+Customer Name: ${data.name}
+Phone: ${data.phone}
+${data.email ? `Email: ${data.email}\n` : ''}
+${data.service ? `Requested Service: ${data.service}\n` : ''}
+${data.message ? `Message: ${data.message}\n` : ''}
+    `.trim();
+
     const result = await sendEmail({
       to: adminEmail,
       replyTo: data.email || undefined,
       subject: `New Inquiry from ${data.name} - Glamour Dry`,
+      text,
       html,
     });
 
@@ -288,10 +313,26 @@ export async function sendBookingNotificationEmail(data: BookingEmailData) {
       </html>
     `;
 
+    const text = `
+New Booking Alert - Glamour Dry
+Order ID: #${cleanOrderId}
+Total Amount: Rs. ${data.totalAmount} (${data.paymentMethod === 'online' ? 'Online Paid' : 'Cash on Delivery'})
+Service: ${data.service}
+Pickup Schedule: ${data.pickupDate} (${data.pickupTime})
+
+Customer Name: ${data.customerName || 'Customer'}
+Phone: ${data.customerPhone || 'N/A'}
+Email: ${data.customerEmail || 'N/A'}
+Pickup Address: ${data.address}
+${data.notes ? `Special Notes: ${data.notes}\n` : ''}
+Received: ${formattedDate}
+    `.trim();
+
     const result = await sendEmail({
       to: adminEmail,
       replyTo: data.customerEmail || undefined,
-      subject: `New Booking #${cleanOrderId}: ${data.service} (₹${data.totalAmount})`,
+      subject: `New Booking #${cleanOrderId}: ${data.service} (Rs. ${data.totalAmount})`,
+      text,
       html,
     });
 
@@ -433,7 +474,7 @@ export async function sendCustomerBookingConfirmationEmail(data: BookingEmailDat
               </div>
             </div>
 
-            <a href="https://glamourdry.com/dashboard" class="btn-primary">
+            <a href="${siteUrl}/dashboard" class="btn-primary">
               Track Your Order on Dashboard →
             </a>
 
@@ -453,10 +494,44 @@ export async function sendCustomerBookingConfirmationEmail(data: BookingEmailDat
       </html>
     `;
 
+    const text = `
+Booking Confirmed - Glamour Dry
+Order ID: #${cleanOrderId}
+
+Hello ${data.customerName || 'Valued Customer'},
+
+Thank you for booking with Glamour Dry! Your laundry pickup has been scheduled successfully.
+
+ORDER SUMMARY:
+- Order ID: #${cleanOrderId}
+- Service: ${data.service}
+- Total Amount: Rs. ${data.totalAmount} (${isOnline ? 'Online Paid' : 'Cash on Delivery'})
+- Pickup Date: ${data.pickupDate}
+- Pickup Time Window: ${data.pickupTime}
+- Pickup Address: ${data.address}
+${data.notes ? `- Special Instructions: ${data.notes}\n` : ''}
+
+WHAT'S NEXT:
+1. Pickup: Our delivery partner will arrive at your address within your selected time slot.
+2. Eco-Friendly Cleaning: Clothes are inspected and washed with premium organic detergents.
+3. Fast Delivery: Delivered neatly folded and packed right back to your doorstep!
+
+Track your order anytime on your dashboard:
+${siteUrl}/dashboard
+
+Need assistance or wish to reschedule?
+Phone / WhatsApp: +91 63550 90297
+Email: ${adminEmail}
+
+Glamour Dry • Eco-Friendly Garment Care • Ahmedabad, Gujarat
+Sent for Order #${cleanOrderId}
+    `.trim();
+
     const result = await sendEmail({
       to: data.customerEmail,
       replyTo: adminEmail,
-      subject: `🎉 Booking Confirmed! Your Laundry Pickup is Scheduled (#${cleanOrderId}) - Glamour Dry`,
+      subject: `Booking Confirmed: Order #${cleanOrderId} - Glamour Dry`,
+      text,
       html,
     });
 
