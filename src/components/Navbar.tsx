@@ -126,7 +126,40 @@ export default function Navbar({ onOpenBooking }: NavbarProps) {
 
             {isSignedIn && (
               <div style={{ marginLeft: '4px', paddingLeft: '20px', borderLeft: '2px solid #e2e8f0', display: 'flex', alignItems: 'center' }}>
-                <UserButton />
+                <UserButton 
+                  appearance={{
+                    variables: {
+                      colorPrimary: '#38b249',
+                      colorBackground: '#ffffff',
+                      borderRadius: '14px',
+                      fontFamily: "'Outfit', sans-serif",
+                    },
+                    elements: {
+                      card: 'glamour-clerk-card',
+                      modalContent: 'glamour-clerk-modal-content',
+                      modalBackdrop: 'glamour-clerk-backdrop',
+                    }
+                  }}
+                  userProfileProps={{
+                    appearance: {
+                      variables: {
+                        colorPrimary: '#38b249',
+                        colorBackground: '#ffffff',
+                        borderRadius: '14px',
+                        fontFamily: "'Outfit', sans-serif",
+                      },
+                      elements: {
+                        card: 'glamour-clerk-card',
+                        modalContent: 'glamour-clerk-modal-content',
+                        modalBackdrop: 'glamour-clerk-backdrop',
+                        headerTitle: 'glamour-clerk-title',
+                        headerSubtitle: 'glamour-clerk-subtitle',
+                        formButtonPrimary: 'btn-primary glamour-clerk-btn',
+                        badge: 'glamour-clerk-badge',
+                      }
+                    }
+                  }}
+                />
               </div>
             )}
           </div>

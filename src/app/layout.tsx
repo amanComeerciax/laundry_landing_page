@@ -33,7 +33,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        variables: {
+          colorPrimary: '#38b249',
+          colorBackground: '#ffffff',
+          borderRadius: '14px',
+          fontFamily: "'Outfit', -apple-system, sans-serif",
+        },
+        elements: {
+          modalBackdrop: 'glamour-clerk-backdrop',
+          modalContent: 'glamour-clerk-modal-content',
+          card: 'glamour-clerk-card',
+          headerTitle: 'glamour-clerk-title',
+          headerSubtitle: 'glamour-clerk-subtitle',
+          formButtonPrimary: 'btn-primary glamour-clerk-btn',
+          badge: 'glamour-clerk-badge',
+        },
+      }}
+    >
       <html lang="en">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />

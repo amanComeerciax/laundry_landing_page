@@ -547,7 +547,41 @@ export default function UserDashboardPage() {
 
         <div style={{ padding: '24px', borderTop: '1px solid #e2e8f0' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', backgroundColor: '#f8fafc', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
-            <UserButton appearance={{ elements: { avatarBox: "w-10 h-10" } }} />
+            <UserButton 
+              appearance={{
+                variables: {
+                  colorPrimary: '#38b249',
+                  colorBackground: '#ffffff',
+                  borderRadius: '14px',
+                  fontFamily: "'Outfit', sans-serif",
+                },
+                elements: {
+                  avatarBox: { width: '40px', height: '40px' },
+                  card: 'glamour-clerk-card',
+                  modalContent: 'glamour-clerk-modal-content',
+                  modalBackdrop: 'glamour-clerk-backdrop',
+                }
+              }}
+              userProfileProps={{
+                appearance: {
+                  variables: {
+                    colorPrimary: '#38b249',
+                    colorBackground: '#ffffff',
+                    borderRadius: '14px',
+                    fontFamily: "'Outfit', sans-serif",
+                  },
+                  elements: {
+                    card: 'glamour-clerk-card',
+                    modalContent: 'glamour-clerk-modal-content',
+                    modalBackdrop: 'glamour-clerk-backdrop',
+                    headerTitle: 'glamour-clerk-title',
+                    headerSubtitle: 'glamour-clerk-subtitle',
+                    formButtonPrimary: 'btn-primary glamour-clerk-btn',
+                    badge: 'glamour-clerk-badge',
+                  }
+                }
+              }}
+            />
             <div style={{ flex: 1, overflow: 'hidden' }}>
               <p style={{ fontWeight: 700, color: '#133857', fontSize: '14px', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                 {user?.firstName || 'User'}
