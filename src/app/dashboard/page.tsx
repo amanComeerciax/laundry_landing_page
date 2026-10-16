@@ -104,8 +104,27 @@ export default function UserDashboardPage() {
     pickupTime: '',
     address: '',
     phone: '',
+    email: '',
     notes: ''
   });
+
+  const isValidIndianPhone = (phoneStr: string) => {
+    if (!phoneStr) return false;
+    const digits = phoneStr.replace(/[\s\-\(\)\+]/g, '');
+    const cleanDigits = digits.startsWith('91') && digits.length === 12 ? digits.slice(2) : digits;
+    return /^[6-9]\d{9}$/.test(cleanDigits);
+  };
+
+  const isValidEmail = (emailStr: string) => {
+    if (!emailStr) return false;
+    return /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(emailStr.trim());
+  };
+
+  useEffect(() => {
+    if (user?.primaryEmailAddress?.emailAddress && !formData.email) {
+      setFormData(prev => ({ ...prev, email: user.primaryEmailAddress!.emailAddress }));
+    }
+  }, [user, formData.email]);
 
   useEffect(() => {
     // Handle redirect from /book and cost calculator
@@ -194,6 +213,10 @@ export default function UserDashboardPage() {
 
   const handleAddAddress = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isValidIndianPhone(newAddressForm.phone)) {
+      toast.error('Please enter a valid 10-digit Indian mobile number.');
+      return;
+    }
     try {
       const res = await fetch('/api/addresses', {
         method: 'POST',
@@ -256,12 +279,32 @@ export default function UserDashboardPage() {
       return;
     }
 
+    if (!formData.address.trim()) {
+      toast.error('Please enter your pickup & delivery address.');
+      setStep(3);
+      return;
+    }
+
+    if (!isValidIndianPhone(formData.phone)) {
+      toast.error('Please provide a valid 10-digit Indian mobile number (e.g. 9876543210).');
+      setStep(3);
+      return;
+    }
+
+    const emailToUse = (formData.email || user?.primaryEmailAddress?.emailAddress || '').trim();
+    if (!isValidEmail(emailToUse)) {
+      toast.error('Please provide a valid email address for booking confirmation.');
+      setStep(3);
+      return;
+    }
+
     setIsSubmitting(true);
 
     const baseOrderPayload = {
       ...formData,
       customerName: user?.fullName || user?.firstName || 'Customer',
-      customerEmail: user?.primaryEmailAddress?.emailAddress || 'No email',
+      customerEmail: emailToUse,
+      customerPhone: formData.phone.trim(),
       service: formData.serviceName || 'Wash & Fold / Dry Clean', 
       itemsSummary: 'Standard Booking',
       totalAmount: formData.servicePrice || 0,
@@ -1271,16 +1314,99 @@ export default function UserDashboardPage() {
                     )}
 
                     <div style={{ marginBottom: '20px' }}>
-                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>Pickup & Delivery Address</label>
-                      <textarea value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} rows={3} placeholder="Full address including flat no. and landmark" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', fontSize: '15px', resize: 'none' }} />
+                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>
+                        Pickup &amp; Delivery Address <span style={{ color: '#ef4444' }}>*</span>
+                      </label>
+                      <textarea 
+                        value={formData.address} 
+                        onChange={e => setFormData({...formData, address: e.target.value})} 
+                        rows={3} 
+                        placeholder="Full address including flat no., apartment name, and landmark" 
+                        style={{ 
+                          width: '100%', 
+                          padding: '14px', 
+                          borderRadius: '12px', 
+                          border: `1.5px solid ${formData.address.trim() ? '#38b249' : '#e2e8f0'}`, 
+                          fontSize: '15px', 
+                          resize: 'none',
+                          outline: 'none',
+                        }} 
+                      />
                     </div>
-                    <div style={{ marginBottom: '20px' }}>
-                      <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>Phone Number</label>
-                      <input type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} placeholder="+91" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', fontSize: '16px' }} />
+
+                    {/* Contact Details Row: Mobile & Email */}
+                    <div className="grid-2" style={{ gap: '16px', marginBottom: '20px' }}>
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <label style={{ fontSize: '14px', fontWeight: 600, color: '#133857' }}>
+                            Mobile Number <span style={{ color: '#ef4444' }}>*</span>
+                          </label>
+                          {formData.phone && (
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: isValidIndianPhone(formData.phone) ? '#16a34a' : '#dc2626' }}>
+                              {isValidIndianPhone(formData.phone) ? '✓ Valid Number' : '10 Digits Required'}
+                            </span>
+                          )}
+                        </div>
+                        <input 
+                          type="tel" 
+                          value={formData.phone} 
+                          onChange={e => setFormData({...formData, phone: e.target.value})} 
+                          placeholder="e.g. 98765 43210" 
+                          maxLength={15}
+                          style={{ 
+                            width: '100%', 
+                            padding: '14px', 
+                            borderRadius: '12px', 
+                            border: `1.5px solid ${formData.phone ? (isValidIndianPhone(formData.phone) ? '#38b249' : '#ef4444') : '#e2e8f0'}`, 
+                            backgroundColor: formData.phone && !isValidIndianPhone(formData.phone) ? '#fef2f2' : '#ffffff',
+                            fontSize: '15px',
+                            outline: 'none',
+                          }} 
+                        />
+                        {formData.phone && !isValidIndianPhone(formData.phone) && (
+                          <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#dc2626', fontWeight: 500 }}>
+                            Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                          <label style={{ fontSize: '14px', fontWeight: 600, color: '#133857' }}>
+                            Email Address <span style={{ color: '#ef4444' }}>*</span>
+                          </label>
+                          {formData.email && (
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: isValidEmail(formData.email) ? '#16a34a' : '#dc2626' }}>
+                              {isValidEmail(formData.email) ? '✓ Valid Email' : 'Invalid Email'}
+                            </span>
+                          )}
+                        </div>
+                        <input 
+                          type="email" 
+                          value={formData.email} 
+                          onChange={e => setFormData({...formData, email: e.target.value})} 
+                          placeholder="e.g. yourname@gmail.com" 
+                          style={{ 
+                            width: '100%', 
+                            padding: '14px', 
+                            borderRadius: '12px', 
+                            border: `1.5px solid ${formData.email ? (isValidEmail(formData.email) ? '#38b249' : '#ef4444') : '#e2e8f0'}`, 
+                            backgroundColor: formData.email && !isValidEmail(formData.email) ? '#fef2f2' : '#ffffff',
+                            fontSize: '15px',
+                            outline: 'none',
+                          }} 
+                        />
+                        {formData.email && !isValidEmail(formData.email) && (
+                          <p style={{ margin: '6px 0 0', fontSize: '12px', color: '#dc2626', fontWeight: 500 }}>
+                            Booking receipts &amp; updates will be sent to this email address.
+                          </p>
+                        )}
+                      </div>
                     </div>
+
                     <div style={{ marginBottom: '32px' }}>
                       <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, color: '#133857', marginBottom: '8px' }}>Special Instructions (Optional)</label>
-                      <input type="text" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} placeholder="E.g., call upon arrival" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', fontSize: '15px' }} />
+                      <input type="text" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} placeholder="E.g., call upon arrival" style={{ width: '100%', padding: '14px', borderRadius: '12px', border: '1.5px solid #e2e8f0', fontSize: '15px', outline: 'none' }} />
                     </div>
                     <div style={{ display: 'flex', gap: '12px' }}>
                       <button 
@@ -1290,7 +1416,35 @@ export default function UserDashboardPage() {
                       >
                         <ArrowLeft size={18} /> Previous Step
                       </button>
-                      <button onClick={() => setStep(4)} disabled={!formData.address || !formData.phone} className="btn-primary" style={{ flex: 1, padding: '16px', borderRadius: '12px', fontSize: '16px', fontWeight: 700, opacity: (!formData.address || !formData.phone) ? 0.5 : 1 }}>
+                      <button 
+                        type="button"
+                        onClick={() => {
+                          if (!formData.address.trim()) {
+                            toast.error('Please enter your pickup & delivery address.');
+                            return;
+                          }
+                          if (!isValidIndianPhone(formData.phone)) {
+                            toast.error('Please enter a valid 10-digit Indian mobile number.');
+                            return;
+                          }
+                          if (!isValidEmail(formData.email)) {
+                            toast.error('Please enter a valid email address.');
+                            return;
+                          }
+                          setStep(4);
+                        }} 
+                        disabled={!formData.address.trim() || !isValidIndianPhone(formData.phone) || !isValidEmail(formData.email)} 
+                        className="btn-primary" 
+                        style={{ 
+                          flex: 1, 
+                          padding: '16px', 
+                          borderRadius: '12px', 
+                          fontSize: '16px', 
+                          fontWeight: 700, 
+                          opacity: (!formData.address.trim() || !isValidIndianPhone(formData.phone) || !isValidEmail(formData.email)) ? 0.5 : 1,
+                          cursor: (!formData.address.trim() || !isValidIndianPhone(formData.phone) || !isValidEmail(formData.email)) ? 'not-allowed' : 'pointer'
+                        }}
+                      >
                         Review Booking →
                       </button>
                     </div>
@@ -1316,8 +1470,11 @@ export default function UserDashboardPage() {
                         </div>
                       </div>
                       <div>
-                        <p style={{ color: '#64748b', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Pickup Address & Contact</p>
-                        <p style={{ fontWeight: 700, color: '#0f172a', lineHeight: '1.5', margin: 0 }}>{formData.address}<br/>📞 {formData.phone}</p>
+                        <p style={{ color: '#64748b', fontSize: '13px', fontWeight: 600, marginBottom: '4px' }}>Pickup Address &amp; Contact</p>
+                        <p style={{ fontWeight: 700, color: '#0f172a', lineHeight: '1.5', margin: 0 }}>
+                          {formData.address}<br/>
+                          📞 {formData.phone} &nbsp;&bull;&nbsp; ✉️ {formData.email}
+                        </p>
                       </div>
                     </div>
 

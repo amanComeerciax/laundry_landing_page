@@ -17,20 +17,23 @@ export default function Footer() {
   };
 
   return (
-    <footer style={{
-      backgroundColor: '#0b2438',
-      color: '#cbd5e1',
-      paddingTop: '80px',
-      paddingBottom: '30px',
-      borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-    }}>
+    <footer
+      className="site-footer"
+      style={{
+        backgroundColor: '#0b2438',
+        color: '#cbd5e1',
+        paddingTop: '48px',
+        paddingBottom: '28px',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+      }}
+    >
       <div className="container">
         {/* Main 4-Column Footer */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1.4fr 1fr 1fr 1.2fr',
-          gap: '40px',
-          marginBottom: '60px',
+          gap: '32px',
+          marginBottom: '40px',
         }} className="footer-grid">
           {/* Column 1: Brand & Contact Info */}
           <div>
@@ -131,23 +134,23 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13.5px', color: '#94a3b8' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={13} color="#38b249" />
-                <span>Indiranagar & Domlur</span>
+                <span>Satellite &amp; Prahlad Nagar</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={13} color="#38b249" />
-                <span>Koramangala & HSR Layout</span>
+                <span>Bodakdev &amp; Vastrapur</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={13} color="#38b249" />
-                <span>Whitefield & Marathahalli</span>
+                <span>SG Highway &amp; Sindhu Bhavan</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={13} color="#38b249" />
-                <span>Bellandur & Sarjapur</span>
+                <span>Navrangpura &amp; CG Road</span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <MapPin size={13} color="#38b249" />
-                <span>JP Nagar & Jayanagar</span>
+                <span>South Bopal &amp; Shela</span>
               </div>
               <p style={{ fontSize: '12px', color: '#38b249', marginTop: '6px', fontWeight: 600 }}>
                 ✓ Free pickup on orders above ₹350
@@ -255,9 +258,15 @@ export default function Footer() {
             grid-template-columns: repeat(2, 1fr) !important;
           }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+          :global(.site-footer) {
+            padding-top: 32px !important;
+            padding-bottom: 24px !important;
+          }
           .footer-grid {
             grid-template-columns: 1fr !important;
+            gap: 24px !important;
+            margin-bottom: 24px !important;
           }
         }
       `}</style>

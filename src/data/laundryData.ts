@@ -204,7 +204,7 @@ export const TESTIMONIALS = [
   {
     id: 2,
     name: 'Rohit Malhotra',
-    role: 'Tech Executive, Whitefield',
+    role: 'Architect, Prahlad Nagar',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     service: 'Weekly Wash & Steam Iron',
@@ -214,7 +214,7 @@ export const TESTIMONIALS = [
   {
     id: 3,
     name: 'Ananya Deshmukh',
-    role: 'Doctor & Mother, Koramangala',
+    role: 'Doctor & Mother, Bodakdev',
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     service: 'Quilts & Hypoallergenic Laundry',
@@ -224,7 +224,7 @@ export const TESTIMONIALS = [
   {
     id: 4,
     name: 'Vikram Sengupta',
-    role: 'Corporate Consultant, HSR Layout',
+    role: 'Business Consultant, Sindhu Bhavan Road',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
     rating: 5,
     service: 'Bespoke Suits & Sneaker Spa',
@@ -256,6 +256,6 @@ export const FAQS = [
   },
   {
     question: 'What areas do you currently serve for doorstep pickup?',
-    answer: 'We currently cover all major sectors including Indiranagar, Koramangala, Whitefield, HSR Layout, Bellandur, JP Nagar, Malleshwaram, and surrounding residential hubs with scheduled morning and evening slots.',
+    answer: 'We currently cover all major areas of Ahmedabad including Satellite, Prahlad Nagar, Bodakdev, Vastrapur, SG Highway, Sindhu Bhavan Road, Navrangpura, CG Road, Bopal, Shela, and surrounding residential hubs with scheduled morning and evening slots.',
   },
 ];

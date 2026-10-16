@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Clock, MapPin, Phone, User, CheckCircle2, Sparkles, Truck, ShieldCheck } from 'lucide-react';
+import { X, Calendar, Clock, MapPin, Phone, Mail, User, CheckCircle2, Sparkles, Truck, ShieldCheck, AlertCircle } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
 import confetti from 'canvas-confetti';
 import toast from 'react-hot-toast';
 
@@ -20,6 +21,7 @@ export default function PickupModal({
   initialTotal = 0,
   initialItems = '',
 }: PickupModalProps) {
+  const { user } = useUser();
   const [step, setStep] = useState<1 | 2>(1);
   const [service, setService] = useState(initialService);
   const [date, setDate] = useState(() => {
@@ -29,6 +31,7 @@ export default function PickupModal({
   const [timeSlot, setTimeSlot] = useState('Morning (8:00 AM - 11:00 AM)');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [pincode, setPincode] = useState('');
   const [bookingId, setBookingId] = useState('');
@@ -39,10 +42,44 @@ export default function PickupModal({
     }
   }, [initialService]);
 
+  useEffect(() => {
+    if (user) {
+      if (!name && user.fullName) setName(user.fullName);
+      if (!email && user.primaryEmailAddress?.emailAddress) {
+        setEmail(user.primaryEmailAddress.emailAddress);
+      }
+    }
+  }, [user]);
+
   if (!isOpen) return null;
+
+  const cleanPhone = (val: string) => val.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+  const isPhoneValid = (val: string) => /^[6-9]\d{9}$/.test(cleanPhone(val));
+  const isEmailValid = (val: string) => /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(val.trim());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name.trim()) {
+      toast.error('Please enter your full name.');
+      return;
+    }
+
+    if (!isPhoneValid(phone)) {
+      toast.error('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).');
+      return;
+    }
+
+    if (email.trim() && !isEmailValid(email)) {
+      toast.error('Please enter a valid email address (e.g. name@example.com).');
+      return;
+    }
+
+    if (!address.trim()) {
+      toast.error('Please enter your doorstep pickup address.');
+      return;
+    }
+
     const randomId = 'GLAM-' + Math.floor(100000 + Math.random() * 900000);
     setBookingId(randomId);
     setStep(2);
@@ -54,8 +91,9 @@ export default function PickupModal({
       body: JSON.stringify({
         name,
         phone,
+        email: email.trim() || undefined,
         service,
-        message: `Doorstep Pickup Booking ID: ${randomId}\nPickup Date: ${date}\nPreferred Time: ${timeSlot}\nAddress: ${address}${pincode ? ` (PIN: ${pincode})` : ''}\nEstimated Items: ${initialItems || 'Standard Booking'}\nEstimated Amount: ₹${initialTotal}`
+        message: `Doorstep Pickup Booking ID: ${randomId}\nPickup Date: ${date}\nPreferred Time: ${timeSlot}\nEmail: ${email.trim() || 'N/A'}\nAddress: ${address}${pincode ? ` (PIN: ${pincode})` : ''}\nEstimated Items: ${initialItems || 'Standard Booking'}\nEstimated Amount: ₹${initialTotal}`
       })
     }).catch(err => console.error('[PickupModal] Email error:', err));
 
@@ -274,7 +312,7 @@ export default function PickupModal({
                 <div>
                   <label style={{ fontSize: '13px', fontWeight: 700, color: '#133857', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <User size={14} color="#38b249" />
-                    <span>Your Full Name</span>
+                    <span>Your Full Name *</span>
                   </label>
                   <input
                     type="text"
@@ -294,26 +332,77 @@ export default function PickupModal({
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#133857', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Phone size={14} color="#38b249" />
-                    <span>WhatsApp Mobile</span>
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <label style={{ fontSize: '13px', fontWeight: 700, color: '#133857', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                      <Phone size={14} color="#38b249" />
+                      <span>WhatsApp Mobile *</span>
+                    </label>
+                    {phone.length > 0 && (
+                      isPhoneValid(phone) ? (
+                        <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          <CheckCircle2 size={12} /> Valid 10-Digit
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>
+                          10 digits starting 6-9
+                        </span>
+                      )
+                    )}
+                  </div>
                   <input
                     type="tel"
                     required
-                    placeholder="+91 98765 43210"
+                    maxLength={13}
+                    placeholder="9876543210"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     style={{
                       width: '100%',
                       padding: '11px 12px',
                       borderRadius: '12px',
-                      border: '1px solid #cbd5e1',
+                      border: `1.5px solid ${phone.length === 0 ? '#cbd5e1' : isPhoneValid(phone) ? '#38b249' : '#f87171'}`,
+                      backgroundColor: phone.length > 0 && isPhoneValid(phone) ? '#f0fdf4' : '#ffffff',
                       fontSize: '14px',
                       outline: 'none',
                     }}
                   />
                 </div>
+              </div>
+
+              {/* Email Address */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#133857', display: 'flex', alignItems: 'center', gap: '6px', margin: 0 }}>
+                    <Mail size={14} color="#38b249" />
+                    <span>Email Address (for Instant Receipt & Updates)</span>
+                  </label>
+                  {email.length > 0 && (
+                    isEmailValid(email) ? (
+                      <span style={{ fontSize: '11px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        <CheckCircle2 size={12} /> Valid Email
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: '11px', color: '#dc2626', fontWeight: 600 }}>
+                        Invalid email format
+                      </span>
+                    )
+                  )}
+                </div>
+                <input
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '11px 12px',
+                    borderRadius: '12px',
+                    border: `1.5px solid ${email.length === 0 ? '#cbd5e1' : isEmailValid(email) ? '#38b249' : '#f87171'}`,
+                    backgroundColor: email.length > 0 && isEmailValid(email) ? '#f0fdf4' : '#ffffff',
+                    fontSize: '14px',
+                    outline: 'none',
+                  }}
+                />
               </div>
 
               {/* Address & Pincode */}
@@ -438,6 +527,16 @@ export default function PickupModal({
                   <span style={{ color: '#64748b' }}>Date & Slot:</span>
                   <span style={{ fontWeight: 600, color: '#133857' }}>{date} ({timeSlot})</span>
                 </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px' }}>
+                  <span style={{ color: '#64748b' }}>Mobile:</span>
+                  <span style={{ fontWeight: 600, color: '#133857' }}>{phone}</span>
+                </div>
+                {email && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px' }}>
+                    <span style={{ color: '#64748b' }}>Email:</span>
+                    <span style={{ fontWeight: 600, color: '#133857' }}>{email}</span>
+                  </div>
+                )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13.5px' }}>
                   <span style={{ color: '#64748b' }}>Address:</span>
                   <span style={{ fontWeight: 600, color: '#133857', maxWidth: '240px', textAlign: 'right' }}>

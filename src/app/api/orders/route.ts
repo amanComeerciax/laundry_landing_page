@@ -15,6 +15,16 @@ export async function POST(req: NextRequest) {
     
     const data = await req.json();
 
+    // Validate phone number (must be valid 10 digits starting with 6-9)
+    const rawPhone = String(data.phone || '').trim();
+    const cleanPhone = rawPhone.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+    if (!cleanPhone || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).' },
+        { status: 400 }
+      );
+    }
+
     // Validate that pickupDate is not in the past
     const d = new Date();
     const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -40,6 +50,14 @@ export async function POST(req: NextRequest) {
       } catch (err) {
         console.error('[Orders API] Clerk user lookup error:', err);
       }
+    }
+
+    // Validate email format if provided
+    if (customerEmail && customerEmail !== 'No email' && !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(customerEmail.trim())) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address format (e.g. name@example.com).' },
+        { status: 400 }
+      );
     }
     
     // Generate a simple Order ID

@@ -13,6 +13,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const rawPhone = String(phone || '').trim();
+    const cleanPhone = rawPhone.replace(/\D/g, '').replace(/^91(?=\d{10}$)/, '');
+    if (!cleanPhone || !/^[6-9]\d{9}$/.test(cleanPhone)) {
+      return NextResponse.json(
+        { error: 'Please enter a valid 10-digit Indian mobile number.' },
+        { status: 400 }
+      );
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/.test(String(email).trim())) {
+      return NextResponse.json(
+        { error: 'Please enter a valid email address.' },
+        { status: 400 }
+      );
+    }
+
     const emailResult = await sendInquiryEmail({
       name,
       phone,
